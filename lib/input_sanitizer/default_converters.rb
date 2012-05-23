@@ -27,4 +27,24 @@ module InputSanitizer
       end
     end
   end
+
+  class BooleanConverter
+    def call(value)
+      vals = {
+        true => true,
+        false => false,
+        'true' => true,
+        'false' => false,
+        '1' => true,
+        '0' => false,
+        'yes' => true,
+        'no' => false,
+      }
+      if vals.has_key?(value)
+        vals[value]
+      else
+        raise ConversionError.new
+      end
+    end
+  end
 end

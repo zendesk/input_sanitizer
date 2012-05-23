@@ -25,6 +25,7 @@ class InputSanitizer::Sanitizer
       :integer => InputSanitizer::IntegerConverter.new,
       :string => InputSanitizer::StringConverter.new,
       :date => InputSanitizer::DateConverter.new,
+      :boolean => InputSanitizer::BooleanConverter.new,
     }
   end
 

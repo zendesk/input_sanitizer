@@ -75,5 +75,10 @@ describe InputSanitizer::Sanitizer do
       sanitizer.converters.should have_key(:date)
       sanitizer.converters[:date].should be_a(InputSanitizer::DateConverter)
     end
+
+    it "includes :boolean type" do
+      sanitizer.converters.should have_key(:boolean)
+      sanitizer.converters[:boolean].should be_a(InputSanitizer::BooleanConverter)
+    end
   end
 end

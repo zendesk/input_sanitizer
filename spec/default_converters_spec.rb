@@ -27,3 +27,39 @@ describe InputSanitizer::DateConverter do
     lambda { converter.call("2012-02-30") }.should raise_error(InputSanitizer::ConversionError)
   end
 end
+
+describe InputSanitizer::BooleanConverter do
+  let(:converter) { InputSanitizer::BooleanConverter.new }
+
+  it "casts 'true' to true" do
+    converter.call('true').should be_true
+  end
+
+  it "casts true to true" do
+    converter.call(true).should be_true
+  end
+
+  it "casts '1' to true" do
+    converter.call('1').should be_true
+  end
+
+  it "casts 'yes' to true" do
+    converter.call('yes').should be_true
+  end
+
+  it "casts 'false' to false" do
+    converter.call('false').should be_false
+  end
+
+  it "casts false to false" do
+    converter.call(false).should be_false
+  end
+
+  it "casts '0' to false" do
+    converter.call('0').should be_false
+  end
+
+  it "casts 'no' to false" do
+    converter.call('no').should be_false
+  end
+end
