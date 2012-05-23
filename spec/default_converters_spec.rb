@@ -62,4 +62,8 @@ describe InputSanitizer::BooleanConverter do
   it "casts 'no' to false" do
     converter.call('no').should be_false
   end
+
+  it "raises error if cannot cast" do
+    lambda { converter.call("notboolean") }.should raise_error(InputSanitizer::ConversionError)
+  end
 end
