@@ -14,4 +14,6 @@ Gem::Specification.new do |gem|
   gem.name          = "input_sanitizer"
   gem.require_paths = ["lib"]
   gem.version       = InputSanitizer::VERSION
+
+  gem.add_development_dependency "rspec"
 end
