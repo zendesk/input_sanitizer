@@ -32,7 +32,7 @@ Or install it yourself as:
     end
 
     class PrivilegedSanitizer < PersonSanitizer
-      int :account_id
+      integer :account_id
     end
 
     class ZzzConverter < Converter

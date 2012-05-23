@@ -30,7 +30,7 @@ class InputSanitizer::Sanitizer
   end
 
   def self.fields
-    @fields ||= {}
+    @@fields ||= {}
   end
 
   def self.string(*keys)
@@ -39,6 +39,10 @@ class InputSanitizer::Sanitizer
 
   def self.integer(*keys)
     set_keys_to_type(keys, :integer)
+  end
+
+  def self.boolean(*keys)
+    set_keys_to_type(keys, :boolean)
   end
 
   def self.custom(*keys)

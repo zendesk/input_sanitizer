@@ -6,6 +6,14 @@ class BasicSanitizer < InputSanitizer::Sanitizer
   custom :cust1, :cust2, :converter => lambda { |v| v.reverse }
 end
 
+class ExtendedSanitizer < BasicSanitizer
+  boolean :is_nice
+end
+
+class OverridingSanitizer < BasicSanitizer
+  integer :is_nice
+end
+
 describe InputSanitizer::Sanitizer do
   describe "#cleaned" do
     let(:sanitizer) { BasicSanitizer.new(@params) }
@@ -43,6 +51,23 @@ describe InputSanitizer::Sanitizer do
       @params = {:num => "f"}
 
       cleaned.should_not have_key(:num)
+    end
+
+    it "inherits converters from superclass" do
+      sanitizer = ExtendedSanitizer.new({:num => "23", :is_nice => 'false'})
+      cleaned = sanitizer.cleaned
+
+      cleaned.should have_key(:num)
+      cleaned[:num].should == 23
+      cleaned[:is_nice].should be_false
+    end
+
+    it "overrides inherited fields" do
+      sanitizer = OverridingSanitizer.new({:is_nice => "42"})
+      cleaned = sanitizer.cleaned
+
+      cleaned.should have_key(:is_nice)
+      cleaned[:is_nice].should == 42
     end
   end
 
