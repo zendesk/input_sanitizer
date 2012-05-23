@@ -3,6 +3,7 @@ require 'spec_helper'
 class BasicSanitizer < InputSanitizer::Sanitizer
   string :x, :y, :z
   int :num
+  custom :cust1, :cust2, :converter => lambda { |v| v.reverse }
 end
 
 describe InputSanitizer::Sanitizer do
@@ -42,6 +43,18 @@ describe InputSanitizer::Sanitizer do
       @params = {:num => "f"}
 
       cleaned.should_not have_key(:num)
+    end
+  end
+
+  describe ".custom" do
+    let(:sanitizer) { BasicSanitizer.new(@params) }
+    let(:cleaned) { sanitizer.cleaned }
+
+    it "converts using custom converter" do
+      @params = {:cust1 => "cigam"}
+
+      cleaned.should have_key(:cust1)
+      cleaned[:cust1].should == "magic"
     end
   end
 

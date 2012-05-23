@@ -8,9 +8,10 @@ class InputSanitizer::Sanitizer
   def cleaned
     ret = {}
     self.class.fields.each do |field, type|
+      converter = type.respond_to?(:call) ? type : self.class.converters[type]
       if @data.has_key?(field)
         begin
-          value = self.class.converters[type].call(@data[field])
+          value = converter.call(@data[field])
           ret[field] = value
         rescue InputSanitizer::ConversionError
         end
@@ -39,6 +40,12 @@ class InputSanitizer::Sanitizer
     set_keys_to_type(keys, :int)
   end
 
+  def self.custom(*keys)
+    options = keys.pop
+    converter = options[:converter]
+    self.set_keys_to_type(keys, converter)
+  end
+
   private
   def symbolize_keys(data)
     ret = {}
@@ -53,4 +60,5 @@ class InputSanitizer::Sanitizer
       fields[key] = type
     end
   end
+
 end
