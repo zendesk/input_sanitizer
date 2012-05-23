@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe InputSanitizer::IntConverter do
-  let(:converter) { InputSanitizer::IntConverter.new }
+describe InputSanitizer::IntegerConverter do
+  let(:converter) { InputSanitizer::IntegerConverter.new }
 
   it "casts string to integer" do
     converter.call("42").should == 42

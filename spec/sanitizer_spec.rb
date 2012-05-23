@@ -2,7 +2,7 @@ require 'spec_helper'
 
 class BasicSanitizer < InputSanitizer::Sanitizer
   string :x, :y, :z
-  int :num
+  integer :num
   custom :cust1, :cust2, :converter => lambda { |v| v.reverse }
 end
 
@@ -61,9 +61,9 @@ describe InputSanitizer::Sanitizer do
   describe ".converters" do
     let(:sanitizer) { InputSanitizer::Sanitizer }
 
-    it "includes :int type" do
-      sanitizer.converters.should have_key(:int)
-      sanitizer.converters[:int].should be_a(InputSanitizer::IntConverter)
+    it "includes :integer type" do
+      sanitizer.converters.should have_key(:integer)
+      sanitizer.converters[:integer].should be_a(InputSanitizer::IntegerConverter)
     end
 
     it "includes :string type" do

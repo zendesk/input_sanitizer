@@ -2,7 +2,7 @@ module InputSanitizer
   class ConversionError < Exception
   end
 
-  class IntConverter
+  class IntegerConverter
     def call(value)
       cast = value.to_i
       if cast.to_s != value.to_s

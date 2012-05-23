@@ -22,7 +22,7 @@ class InputSanitizer::Sanitizer
 
   def self.converters
     {
-      :int => InputSanitizer::IntConverter.new,
+      :integer => InputSanitizer::IntegerConverter.new,
       :string => InputSanitizer::StringConverter.new,
       :date => InputSanitizer::DateConverter.new,
     }
@@ -36,8 +36,8 @@ class InputSanitizer::Sanitizer
     set_keys_to_type(keys, :string)
   end
 
-  def self.int(*keys)
-    set_keys_to_type(keys, :int)
+  def self.integer(*keys)
+    set_keys_to_type(keys, :integer)
   end
 
   def self.custom(*keys)
