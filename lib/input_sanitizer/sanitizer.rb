@@ -25,6 +25,7 @@ class InputSanitizer::Sanitizer
       :integer => InputSanitizer::IntegerConverter.new,
       :string => InputSanitizer::StringConverter.new,
       :date => InputSanitizer::DateConverter.new,
+      :time => InputSanitizer::TimeConverter.new,
       :boolean => InputSanitizer::BooleanConverter.new,
     }
   end
@@ -49,6 +50,14 @@ class InputSanitizer::Sanitizer
     options = keys.pop
     converter = options[:converter]
     self.set_keys_to_type(keys, converter)
+  end
+
+  def self.date(*keys)
+    set_keys_to_type(keys, :date)
+  end
+
+  def self.time(*keys)
+    set_keys_to_type(keys, :time)
   end
 
   private

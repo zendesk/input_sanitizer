@@ -3,6 +3,8 @@ require 'spec_helper'
 class BasicSanitizer < InputSanitizer::Sanitizer
   string :x, :y, :z
   integer :num
+  date :birthday
+  time :updated_at
   custom :cust1, :cust2, :converter => lambda { |v| v.reverse }
 end
 
