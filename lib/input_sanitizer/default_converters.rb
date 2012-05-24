@@ -1,3 +1,5 @@
+require 'time'
+
 module InputSanitizer
   class ConversionError < Exception
   end
@@ -20,11 +22,23 @@ module InputSanitizer
 
   class DateConverter
     def call(value)
-      begin
-        Date.iso8601(value)
-      rescue ArgumentError
+      Date.iso8601(value)
+    rescue ArgumentError
+      raise ConversionError.new
+    end
+  end
+
+  class TimeConverter
+    ISO_RE = /\A\d{4}-?\d{2}-?\d{2}([T ]?\d{2}(:?\d{2}(:?\d{2})?)?)?/
+
+    def call(value)
+      if value =~ ISO_RE
+        Time.parse(value)
+      else
         raise ConversionError.new
       end
+    rescue ArgumentError
+      raise ConversionError.new
     end
   end
 

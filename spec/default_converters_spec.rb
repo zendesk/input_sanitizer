@@ -67,3 +67,32 @@ describe InputSanitizer::BooleanConverter do
     lambda { converter.call("notboolean") }.should raise_error(InputSanitizer::ConversionError)
   end
 end
+
+
+describe InputSanitizer::TimeConverter do
+  let(:converter) { InputSanitizer::TimeConverter.new }
+
+
+  it "casts date time in iso format" do
+    t = Time.new(2012, 5, 15, 13, 42, 54)
+    converter.call("2012-05-15 13:42:54").should == t
+    converter.call("2012-05-15T13:42:54").should == t
+    converter.call("20120515134254").should == t
+
+  end
+
+  it "does not require time part" do
+    converter.call("2012-05-15 13:42").should == Time.new(2012, 5, 15, 13, 42)
+    converter.call("2012-05-15 13").should == Time.new(2012, 5, 15, 13)
+    converter.call("2012-05-15").should == Time.new(2012, 5, 15)
+
+  end
+
+  it "raises error if can format is wrong" do
+    lambda { converter.call("2/10/2031 13:44:22") }.should raise_error(InputSanitizer::ConversionError)
+  end
+
+  it "raises error if date is wrong" do
+    lambda { converter.call("2012-02-32") }.should raise_error(InputSanitizer::ConversionError)
+  end
+end
