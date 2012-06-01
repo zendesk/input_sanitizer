@@ -7,17 +7,26 @@ class InputSanitizer::Sanitizer
 
   def cleaned
     ret = {}
-    self.class.fields.each do |field, type|
+    self.class.fields.each do |field, hash|
+      type = hash[:type]
+      options = hash[:options]
       converter = type.respond_to?(:call) ? type : self.class.converters[type]
       if @data.has_key?(field)
+        check_required_value(@data[field], options)
         begin
           value = converter.call(@data[field])
           ret[field] = value
         rescue InputSanitizer::ConversionError
         end
+      else
+        check_required_value(nil, options)
       end
     end
     ret
+  end
+
+  def check_required_value(value, options)
+    raise InputSanitizer::RequiredParameterMissingError.new if options[:required] && value.nil?
   end
 
   def self.converters
@@ -30,8 +39,16 @@ class InputSanitizer::Sanitizer
     }
   end
 
+  def self.inherited(subclass)
+    subclass.fields = self.fields.dup
+  end
+
   def self.fields
-    @@fields ||= {}
+    @fields ||= {}
+  end
+
+  def self.fields=(new_fields)
+    @fields = new_fields
   end
 
   def self.string(*keys)
@@ -46,12 +63,6 @@ class InputSanitizer::Sanitizer
     set_keys_to_type(keys, :boolean)
   end
 
-  def self.custom(*keys)
-    options = keys.pop
-    converter = options[:converter]
-    self.set_keys_to_type(keys, converter)
-  end
-
   def self.date(*keys)
     set_keys_to_type(keys, :date)
   end
@@ -60,18 +71,34 @@ class InputSanitizer::Sanitizer
     set_keys_to_type(keys, :time)
   end
 
+  def self.custom(*keys)
+    options = keys.pop
+    converter = options[:converter]
+    raise "You did not define a converter for a custom type" if converter == nil
+    self.set_keys_to_type(keys, converter)
+  end
+
+  def self.extract_options!(array)
+    array.last.is_a?(Hash) ? array.pop : {}
+  end
+
+  def self.extract_options(array)
+    array.last.is_a?(Hash) ? array.last : {}
+  end
+
   private
+
   def symbolize_keys(data)
-    ret = {}
-    data.each do |key, value|
-      ret[key.to_sym] = value
+    data.inject({}) do |memo, kv|
+      memo[kv.first.to_sym] = kv.last
+      memo
     end
-    ret
   end
 
   def self.set_keys_to_type(keys, type)
+    opts = extract_options!(keys)
     keys.each do |key|
-      fields[key] = type
+      fields[key] = { :type => type, :options => opts }
     end
   end
 

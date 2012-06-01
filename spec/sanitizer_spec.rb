@@ -8,6 +8,10 @@ class BasicSanitizer < InputSanitizer::Sanitizer
   custom :cust1, :cust2, :converter => lambda { |v| v.reverse }
 end
 
+class BrokenCustomSanitizer < InputSanitizer::Sanitizer
+
+end
+
 class ExtendedSanitizer < BasicSanitizer
   boolean :is_nice
 end
@@ -16,10 +20,15 @@ class OverridingSanitizer < BasicSanitizer
   integer :is_nice
 end
 
+class RequiredParameters < BasicSanitizer
+  integer :is_nice, :required => true
+end
+
 describe InputSanitizer::Sanitizer do
   describe "#cleaned" do
     let(:sanitizer) { BasicSanitizer.new(@params) }
     let(:cleaned) { sanitizer.cleaned }
+    let(:required) { RequiredParameters.new(@params) }
 
     it "includes specified params" do
       @params = {"x" => 3, "y" => "tom", "z" => "mike"}
@@ -71,6 +80,22 @@ describe InputSanitizer::Sanitizer do
       cleaned.should have_key(:is_nice)
       cleaned[:is_nice].should == 42
     end
+
+    it "raises an error if required field is missing" do
+      @params = {}
+      expect{ required.cleaned }.should raise_error(InputSanitizer::RequiredParameterMissingError)
+    end
+
+    it "raises an error if required field is nil" do
+      @params = { :is_nice => nil }
+      expect{ required.cleaned }.should raise_error(InputSanitizer::RequiredParameterMissingError)
+    end
+
+    it "does not raise an error if required field is present" do
+      @params = { :is_nice => 123 }
+      expect{ required.cleaned }.should_not raise_error
+    end
+
   end
 
   describe ".custom" do
@@ -82,6 +107,12 @@ describe InputSanitizer::Sanitizer do
 
       cleaned.should have_key(:cust1)
       cleaned[:cust1].should == "magic"
+    end
+
+    it "raises an error when converter is not defined" do
+      expect do
+        BrokenCustomSanitizer.custom(:x)
+      end.should raise_error
     end
   end
 
@@ -107,5 +138,40 @@ describe InputSanitizer::Sanitizer do
       sanitizer.converters.should have_key(:boolean)
       sanitizer.converters[:boolean].should be_a(InputSanitizer::BooleanConverter)
     end
+  end
+
+  describe '.extract_options' do
+
+    it "extracts hash from array if is last" do
+      options = { :a => 1}
+      array = [1,2, options]
+      BasicSanitizer.extract_options(array).should == options
+      array.should == [1,2, options]
+    end
+
+    it "does not extract the last element if not a hash and returns default empty hash" do
+      array = [1,2]
+      BasicSanitizer.extract_options(array).should_not == 2
+      BasicSanitizer.extract_options(array).should == {}
+      array.should == [1,2]
+    end
+
+  end
+
+  describe '.extract_options!' do
+
+    it "extracts hash from array if is last" do
+      options = { :a => 1}
+      array = [1,2, options]
+      BasicSanitizer.extract_options!(array).should == options
+      array.should == [1,2]
+    end
+
+    it "leaves other arrays alone" do
+      array = [1,2]
+      BasicSanitizer.extract_options!(array).should == {}
+      array.should == [1,2]
+    end
+
   end
 end
