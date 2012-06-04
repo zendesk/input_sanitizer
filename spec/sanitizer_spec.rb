@@ -124,6 +124,11 @@ describe InputSanitizer::Sanitizer do
       sanitizer.converters.should have_key(:boolean)
       sanitizer.converters[:boolean].should be_a(InputSanitizer::BooleanConverter)
     end
+
+    it "includes :positive_integer type" do
+      sanitizer.converters.should have_key(:positive_integer)
+      sanitizer.converters[:positive_integer].should be_a(InputSanitizer::PositiveIntegerConverter)
+    end
   end
 
   describe '.extract_options' do

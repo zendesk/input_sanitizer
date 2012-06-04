@@ -45,6 +45,7 @@ class InputSanitizer::Sanitizer
   def self.converters
     {
       :integer => InputSanitizer::IntegerConverter.new,
+      :positive_integer => InputSanitizer::PositiveIntegerConverter.new,
       :string => InputSanitizer::StringConverter.new,
       :date => InputSanitizer::DateConverter.new,
       :time => InputSanitizer::TimeConverter.new,
