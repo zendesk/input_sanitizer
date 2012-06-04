@@ -8,7 +8,7 @@ module InputSanitizer
     def call(value)
       cast = value.to_i
       if cast.to_s != value.to_s
-        raise ConversionError.new
+        raise ConversionError.new("invalid integer")
       end
       cast
     end
@@ -24,7 +24,7 @@ module InputSanitizer
     def call(value)
       Date.iso8601(value)
     rescue ArgumentError
-      raise ConversionError.new
+      raise ConversionError.new("invalid iso8601 date")
     end
   end
 
@@ -35,10 +35,10 @@ module InputSanitizer
       if value =~ ISO_RE
         Time.parse(value)
       else
-        raise ConversionError.new
+        raise ConversionError.new("invalid time")
       end
     rescue ArgumentError
-      raise ConversionError.new
+      raise ConversionError.new("invalid time")
     end
   end
 
@@ -57,7 +57,7 @@ module InputSanitizer
       if vals.has_key?(value)
         vals[value]
       else
-        raise ConversionError.new
+        raise ConversionError.new("invalid boolean")
       end
     end
   end

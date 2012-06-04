@@ -183,7 +183,7 @@ describe InputSanitizer::Sanitizer do
       errors.size.should == 1
       errors[0][:field].should == :num
       errors[0][:type].should == :invalid_value
-      errors[0][:description].should be_nil
+      errors[0][:description].should == "invalid integer"
     end
   end
 end

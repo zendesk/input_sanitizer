@@ -17,8 +17,8 @@ class InputSanitizer::Sanitizer
         begin
           value = converter.call(@data[field])
           ret[field] = value
-        rescue InputSanitizer::ConversionError
-          add_error(field, :invalid_value)
+        rescue InputSanitizer::ConversionError => ex
+          add_error(field, :invalid_value, ex.message)
         end
       else
         add_error(field, :missing) if options[:required]
