@@ -25,8 +25,9 @@ class RequiredParameters < BasicSanitizer
 end
 
 describe InputSanitizer::Sanitizer do
+  let(:sanitizer) { BasicSanitizer.new(@params) }
+
   describe "#cleaned" do
-    let(:sanitizer) { BasicSanitizer.new(@params) }
     let(:cleaned) { sanitizer.cleaned }
     let(:required) { RequiredParameters.new(@params) }
 
@@ -79,21 +80,6 @@ describe InputSanitizer::Sanitizer do
 
       cleaned.should have_key(:is_nice)
       cleaned[:is_nice].should == 42
-    end
-
-    it "raises an error if required field is missing" do
-      @params = {}
-      expect{ required.cleaned }.should raise_error(InputSanitizer::RequiredParameterMissingError)
-    end
-
-    it "raises an error if required field is nil" do
-      @params = { :is_nice => nil }
-      expect{ required.cleaned }.should raise_error(InputSanitizer::RequiredParameterMissingError)
-    end
-
-    it "does not raise an error if required field is present" do
-      @params = { :is_nice => 123 }
-      expect{ required.cleaned }.should_not raise_error
     end
 
   end
@@ -173,5 +159,31 @@ describe InputSanitizer::Sanitizer do
       array.should == [1,2]
     end
 
+  end
+
+  describe "#valid?" do
+    it "is valid when params are ok" do
+      @params = {:num => "3"}
+
+      sanitizer.should be_valid
+    end
+
+    it "is not valid when missing params" do
+      @params = {:num => "mike"}
+
+      sanitizer.should_not be_valid
+    end
+  end
+
+  describe "#errors" do
+    it "returns array containing hashes describing error" do
+      @params = {:num => "mike"}
+
+      errors = sanitizer.errors
+      errors.size.should == 1
+      errors[0][:field].should == :num
+      errors[0][:type].should == :invalid_value
+      errors[0][:description].should be_nil
+    end
   end
 end

@@ -3,30 +3,43 @@ require 'input_sanitizer/default_converters'
 class InputSanitizer::Sanitizer
   def initialize(data)
     @data = symbolize_keys(data)
+    @performed = false
   end
 
   def cleaned
+    @errors = []
     ret = {}
     self.class.fields.each do |field, hash|
       type = hash[:type]
       options = hash[:options]
       converter = type.respond_to?(:call) ? type : self.class.converters[type]
       if @data.has_key?(field)
-        check_required_value(@data[field], options)
         begin
           value = converter.call(@data[field])
           ret[field] = value
         rescue InputSanitizer::ConversionError
+          add_error(field, :invalid_value)
         end
       else
-        check_required_value(nil, options)
+        add_error(field, :missing) if options[:required]
       end
     end
+    @performed = true
     ret
   end
 
-  def check_required_value(value, options)
-    raise InputSanitizer::RequiredParameterMissingError.new if options[:required] && value.nil?
+  def valid?
+    cleaned unless @performed
+    @errors.empty?
+  end
+
+  def errors
+    cleaned unless @performed
+    @errors
+  end
+
+  def add_error(field, type, description = nil)
+    @errors << {:field => field, :type => type, :description => description}
   end
 
   def self.converters
