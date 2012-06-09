@@ -73,6 +73,10 @@ class InputSanitizer::Sanitizer
     set_keys_to_type(keys, :integer)
   end
 
+  def self.positive_integer(*keys)
+    set_keys_to_type(keys, :positive_integer)
+  end
+
   def self.boolean(*keys)
     set_keys_to_type(keys, :boolean)
   end
