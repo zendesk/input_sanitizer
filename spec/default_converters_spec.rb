@@ -84,9 +84,12 @@ end
 describe InputSanitizer::TimeConverter do
   let(:converter) { InputSanitizer::TimeConverter.new }
 
+  it "raises if timezone part given" do
+    lambda { converter.call("2012-05-15 13:42:54 +01:00") }.should raise_error(InputSanitizer::ConversionError)
+  end
 
   it "casts date time in iso format" do
-    t = Time.new(2012, 5, 15, 13, 42, 54)
+    t = Time.utc(2012, 5, 15, 13, 42, 54)
     converter.call("2012-05-15 13:42:54").should == t
     converter.call("2012-05-15T13:42:54").should == t
     converter.call("20120515134254").should == t
@@ -94,9 +97,9 @@ describe InputSanitizer::TimeConverter do
   end
 
   it "does not require time part" do
-    converter.call("2012-05-15 13:42").should == Time.new(2012, 5, 15, 13, 42)
-    converter.call("2012-05-15 13").should == Time.new(2012, 5, 15, 13)
-    converter.call("2012-05-15").should == Time.new(2012, 5, 15)
+    converter.call("2012-05-15 13:42").should == Time.utc(2012, 5, 15, 13, 42)
+    converter.call("2012-05-15 13").should == Time.utc(2012, 5, 15, 13)
+    converter.call("2012-05-15").should == Time.utc(2012, 5, 15)
 
   end
 

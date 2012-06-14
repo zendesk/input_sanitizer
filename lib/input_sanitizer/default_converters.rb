@@ -29,24 +29,31 @@ module InputSanitizer
   end
 
   class DateConverter
+    ISO_RE = /\A\d{4}-?\d{2}-?\d{2}/
+
     def call(value)
-      Date.iso8601(value)
+      raise ConversionError.new("invalid time") unless value =~ ISO_RE
+      Date.parse(value)
     rescue ArgumentError
       raise ConversionError.new("invalid iso8601 date")
     end
   end
 
   class TimeConverter
-    ISO_RE = /\A\d{4}-?\d{2}-?\d{2}([T ]?\d{2}(:?\d{2}(:?\d{2})?)?)?/
+    ISO_RE = /\A\d{4}-?\d{2}-?\d{2}([T ]?\d{2}(:?\d{2}(:?\d{2})?)?)?\Z/
 
     def call(value)
       if value =~ ISO_RE
-        Time.parse(value)
+        strip_timezone(Time.parse(value))
       else
         raise ConversionError.new("invalid time")
       end
     rescue ArgumentError
       raise ConversionError.new("invalid time")
+    end
+
+    def strip_timezone(time)
+      Time.utc(time.year, time.month, time.day, time.hour, time.min, time.sec)
     end
   end
 
