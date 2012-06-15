@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
-require File.expand_path('../lib/input_sanitizer/version', __FILE__)
+$LOAD_PATH.push File.expand_path('../lib', __FILE__)
+require 'input_sanitizer/version'
 
 Gem::Specification.new do |gem|
   gem.authors       = ["Tomek Paczkowski", "Tomasz Werbicki"]
