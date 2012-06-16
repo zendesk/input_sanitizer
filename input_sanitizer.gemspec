@@ -3,8 +3,8 @@ $LOAD_PATH.push File.expand_path('../lib', __FILE__)
 require 'input_sanitizer/version'
 
 Gem::Specification.new do |gem|
-  gem.authors       = ["Tomek Paczkowski", "Tomasz Werbicki"]
-  gem.email         = ["tom@futuresimple.com", "tomasz@futuresimple.com"]
+  gem.authors       = ["Tomek Paczkowski", "Tomasz Werbicki", "Michal Bugno"]
+  gem.email         = ["tom@futuresimple.com", "tomasz@futuresimple.com", "michal@futuresimple.com"]
   gem.description   = %q{Gem to sanitize hash of incoming data}
   gem.summary       = %q{Gem to sanitize hash of incoming data}
   gem.homepage      = ""
