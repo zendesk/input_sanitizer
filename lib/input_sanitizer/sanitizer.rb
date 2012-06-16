@@ -45,7 +45,6 @@ class InputSanitizer::Sanitizer
   def self.converters
     {
       :integer => InputSanitizer::IntegerConverter.new,
-      :positive_integer => InputSanitizer::PositiveIntegerConverter.new,
       :string => InputSanitizer::StringConverter.new,
       :date => InputSanitizer::DateConverter.new,
       :time => InputSanitizer::TimeConverter.new,
@@ -71,10 +70,6 @@ class InputSanitizer::Sanitizer
 
   def self.integer(*keys)
     set_keys_to_type(keys, :integer)
-  end
-
-  def self.positive_integer(*keys)
-    set_keys_to_type(keys, :positive_integer)
   end
 
   def self.boolean(*keys)
