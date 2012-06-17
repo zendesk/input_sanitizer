@@ -50,21 +50,31 @@ module InputSanitizer
   end
 
   class BooleanConverter
+    BOOLEAN_MAP = {
+      true => true,
+      false => false,
+      'true' => true,
+      'false' => false,
+      '1' => true,
+      '0' => false,
+      'yes' => true,
+      'no' => false,
+    }
+
     def call(value)
-      vals = {
-        true => true,
-        false => false,
-        'true' => true,
-        'false' => false,
-        '1' => true,
-        '0' => false,
-        'yes' => true,
-        'no' => false,
-      }
-      if vals.has_key?(value)
-        vals[value]
+      if BOOLEAN_MAP.has_key?(value)
+        BOOLEAN_MAP[value]
       else
-        raise ConversionError.new("invalid boolean")
+        truthy, falsy = BOOLEAN_MAP.partition { |_, value| value }
+        truthy = truthy.map { |e| "'#{e[0]}'" }.uniq
+        falsy = falsy.map { |e| "'#{e[0]}'" }.uniq
+
+        message = "Invalid boolean: use "
+        message += truthy.join(", ")
+        message += " for true, or "
+        message += falsy.join(", ")
+        message += " for false."
+        raise ConversionError.new(message)
       end
     end
   end

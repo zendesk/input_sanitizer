@@ -31,7 +31,7 @@ module InputSanitizer
         found = @valid_values.include?(value.to_sym) ? value.to_sym : nil
       end
       if !found
-        values_joined = @valid_values.join(",")
+        values_joined = @valid_values.join(", ")
         error_message = "Possible values: #{values_joined}"
         raise InputSanitizer::ConversionError.new(error_message)
       else
