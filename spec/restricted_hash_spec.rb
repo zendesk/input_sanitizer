@@ -5,7 +5,7 @@ describe InputSanitizer::RestrictedHash do
   subject { hash }
 
   it "does not allow bad keys" do
-    lambda{hash[:c]}.should raise_error(KeyError)
+    lambda{hash[:c]}.should raise_error(InputSanitizer::KeyNotAllowedError)
   end
 
   it "does allow correct keys" do

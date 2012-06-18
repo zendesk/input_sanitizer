@@ -54,7 +54,7 @@ describe InputSanitizer::Sanitizer do
     it "uses RestrictedHash" do
       @params = {}
 
-      lambda{cleaned[:does_not_exist]}.should raise_error(KeyError)
+      lambda{cleaned[:does_not_exist]}.should raise_error(InputSanitizer::KeyNotAllowedError)
     end
 
     it "includes specified keys and strips rest" do
