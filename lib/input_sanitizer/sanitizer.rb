@@ -23,47 +23,14 @@ class InputSanitizer::Sanitizer
     @cleaned
   end
 
-  def clean_field(field, type, required)
-    if @data.has_key?(field)
-      begin
-        @cleaned[field] = convert(field, type)
-      rescue InputSanitizer::ConversionError => ex
-        add_error(field, :invalid_value, @data[field], ex.message)
-      end
-    elsif required
-      add_missing(field, type)
-    end
-  end
-
-  def convert(field, type)
-    converter(type).call(@data[field])
-  end
-
-  def converter(type)
-    type.respond_to?(:call) ? type : self.class.converters[type]
-  end
-
   def valid?
-    cleaned unless @performed
+    cleaned
     @errors.empty?
   end
 
   def errors
-    cleaned unless @performed
+    cleaned
     @errors
-  end
-
-  def add_error(field, type, value, description = nil)
-    @errors << {
-      :field => field,
-      :type => type,
-      :value => value,
-      :description => description
-    }
-  end
-
-  def add_missing(field, type)
-    add_error(field, type, nil, nil)
   end
 
   def self.converters
@@ -78,14 +45,6 @@ class InputSanitizer::Sanitizer
 
   def self.inherited(subclass)
     subclass.fields = self.fields.dup
-  end
-
-  def self.fields
-    @fields ||= {}
-  end
-
-  def self.fields=(new_fields)
-    @fields = new_fields
   end
 
   def self.string(*keys)
@@ -115,6 +74,16 @@ class InputSanitizer::Sanitizer
     self.set_keys_to_type(keys, converter)
   end
 
+  protected
+  def self.fields
+    @fields ||= {}
+  end
+
+  def self.fields=(new_fields)
+    @fields = new_fields
+  end
+
+  private
   def self.extract_options!(array)
     array.last.is_a?(Hash) ? array.pop : {}
   end
@@ -123,7 +92,38 @@ class InputSanitizer::Sanitizer
     array.last.is_a?(Hash) ? array.last : {}
   end
 
-  private
+  def clean_field(field, type, required)
+    if @data.has_key?(field)
+      begin
+        @cleaned[field] = convert(field, type)
+      rescue InputSanitizer::ConversionError => ex
+        add_error(field, :invalid_value, @data[field], ex.message)
+      end
+    elsif required
+      add_missing(field, type)
+    end
+  end
+
+  def add_error(field, type, value, description = nil)
+    @errors << {
+      :field => field,
+      :type => type,
+      :value => value,
+      :description => description
+    }
+  end
+
+  def add_missing(field, type)
+    add_error(field, type, nil, nil)
+  end
+
+  def convert(field, type)
+    converter(type).call(@data[field])
+  end
+
+  def converter(type)
+    type.respond_to?(:call) ? type : self.class.converters[type]
+  end
 
   def symbolize_keys(data)
     data.inject({}) do |memo, kv|
@@ -138,5 +138,4 @@ class InputSanitizer::Sanitizer
       fields[key] = { :type => type, :options => opts }
     end
   end
-
 end
