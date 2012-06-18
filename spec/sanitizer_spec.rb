@@ -27,6 +27,14 @@ end
 describe InputSanitizer::Sanitizer do
   let(:sanitizer) { BasicSanitizer.new(@params) }
 
+  describe ".clean" do
+    it "returns cleaned data" do
+      clean_data = mock()
+      BasicSanitizer.any_instance.should_receive(:cleaned).and_return(clean_data)
+      BasicSanitizer.clean({}).should be(clean_data)
+    end
+  end
+
   describe "#cleaned" do
     let(:cleaned) { sanitizer.cleaned }
     let(:required) { RequiredParameters.new(@params) }
