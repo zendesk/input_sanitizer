@@ -19,9 +19,6 @@ Or install it yourself as:
 ## Usage
 
 ```ruby
-class Person
-  validates_numericality_of :height, :greater_than => 0
-end
 
 class PersonSanitizer < InputSanitizer::Sanitizer
   string :name
