@@ -4,28 +4,33 @@ class InputSanitizer::Sanitizer
   def initialize(data)
     @data = symbolize_keys(data)
     @performed = false
+    @errors = []
+    @cleaned = {}
   end
 
   def cleaned
-    @errors = []
-    ret = {}
+    return @cleaned if @performed
     self.class.fields.each do |field, hash|
       type = hash[:type]
-      options = hash[:options]
-      converter = type.respond_to?(:call) ? type : self.class.converters[type]
-      if @data.has_key?(field)
-        begin
-          value = converter.call(@data[field])
-          ret[field] = value
-        rescue InputSanitizer::ConversionError => ex
-          add_error(field, :invalid_value, ex.message)
-        end
-      else
-        add_error(field, :missing) if options[:required]
-      end
+      required = hash[:options][:required]
+      clean_field(field, type, required)
     end
     @performed = true
-    ret
+    @cleaned
+  end
+
+  def clean_field(field, type, required)
+    converter = type.respond_to?(:call) ? type : self.class.converters[type]
+    if @data.has_key?(field)
+      begin
+        value = converter.call(@data[field])
+        @cleaned[field] = value
+      rescue InputSanitizer::ConversionError => ex
+        add_error(field, :invalid_value, @data[field], ex.message)
+      end
+    else
+      add_missing(field, type) if required
+    end
   end
 
   def valid?
@@ -38,8 +43,17 @@ class InputSanitizer::Sanitizer
     @errors
   end
 
-  def add_error(field, type, description = nil)
-    @errors << {:field => field, :type => type, :description => description}
+  def add_error(field, type, value, description = nil)
+    @errors << {
+      :field => field,
+      :type => type,
+      :value => value,
+      :description => description
+    }
+  end
+
+  def add_missing(field, type)
+    add_error(field, type, nil, nil)
   end
 
   def self.converters

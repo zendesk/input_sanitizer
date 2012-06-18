@@ -184,6 +184,7 @@ describe InputSanitizer::Sanitizer do
       errors[0][:field].should == :num
       errors[0][:type].should == :invalid_value
       errors[0][:description].should == "invalid integer"
+      errors[0][:value].should == "mike"
     end
   end
 end
