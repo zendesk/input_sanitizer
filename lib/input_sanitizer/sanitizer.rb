@@ -8,6 +8,10 @@ class InputSanitizer::Sanitizer
     @cleaned = {}
   end
 
+  def [](field)
+    cleaned[field]
+  end
+
   def cleaned
     return @cleaned if @performed
     self.class.fields.each do |field, hash|
@@ -20,17 +24,23 @@ class InputSanitizer::Sanitizer
   end
 
   def clean_field(field, type, required)
-    converter = type.respond_to?(:call) ? type : self.class.converters[type]
     if @data.has_key?(field)
       begin
-        value = converter.call(@data[field])
-        @cleaned[field] = value
+        @cleaned[field] = convert(field, type)
       rescue InputSanitizer::ConversionError => ex
         add_error(field, :invalid_value, @data[field], ex.message)
       end
-    else
-      add_missing(field, type) if required
+    elsif required
+      add_missing(field, type)
     end
+  end
+
+  def convert(field, type)
+    converter(type).call(@data[field])
+  end
+
+  def converter(type)
+    type.respond_to?(:call) ? type : self.class.converters[type]
   end
 
   def valid?

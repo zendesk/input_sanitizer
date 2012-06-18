@@ -175,6 +175,14 @@ describe InputSanitizer::Sanitizer do
     end
   end
 
+  describe "#[]" do
+    it "accesses cleaned data" do
+      @params = {:num => "3"}
+
+      sanitizer[:num].should == 3
+    end
+  end
+
   describe "#errors" do
     it "returns array containing hashes describing error" do
       @params = {:num => "mike"}
