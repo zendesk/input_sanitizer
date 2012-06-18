@@ -23,62 +23,45 @@ class Person
   validates_numericality_of :height, :greater_than => 0
 end
 
-class PersonSanitizer < Sanitizer
+class PersonSanitizer < InputSanitizer::Sanitizer
   string :name
   string :address
   integer :height
   float :weight
   date :birthday
-  sub :contact_info, ContactSanitizer
 end
 
+# filters unwanted parameters
+sanitizer = UpdatePerson.new({:account_id => 1, :name => "John"})
+sanitizer.cleaned() # => {:name => "John"}
+
+# provides key access
+sanitizer[:name] # => "John"
+
+# also provides shortcut method, same as new({}).cleaned
+UpdatePerson.clean({:account_id => 1})
+
+# supports inheritance
 class PrivilegedSanitizer < PersonSanitizer
   integer :account_id
 end
 
-class ZzzConverter < Converter
-  def to_ruby(value)
-    value.to_s.gsub('zzz', '')
-  end
-end
-
-
-class Point3d < Sanitizer
-  type :mytype, ZzzConverter
-
-  float :x, :y, :z
-  mytype :zzz
-end
-
-
-# filters unwanted parameters
-sanitizer = UpdatePerson.new({:account_id => 1})
-sanitizer.to_hash() # => {}
-
-# also available as shortcut
-UpdatePerson.to_hash({:account_id => 1}) # => {}
-
-# supports inheritance
-PrivilegedSanitizer.to_hash({:account_id => 1}) # => {:account_id => 1}
-
-# has compatible flow
-sanitizer = UpdatePerson.new({:account_id => 1, :height => -1})
-if sanitizer.update_model(person)
-    redirect
-else
-    render :json => sanitizer.errors.to_json
-end
-
-# gathers errors from active record
-sanitizer.error # => {:height => "must be > 0"}
-
-
+PrivilegedSanitizer.clean({:account_id => 1})
+# => {:account_id => 1}
 
 # handles type conversions
-PrivilegedSanitizer.to_hash({:account_id => '1'}) # => {:account_id => 1}
-PrivilegedSanitizer.to_hash({:birthday => '1986-10-06'}) # => {:birthday => Date.new(1986, 10, 6)}
-```
+PrivilegedSanitizer.clean({:account_id => '1'})
+# => {:account_id => 1}
 
+PrivilegedSanitizer.clean({:birthday => '1986-10-06'})
+# => {:birthday => Date.new(1986, 10, 6)}
+
+# it prevents obvious errors
+data = PrivilegedSanitizer.clean({:account_id => 3})
+data[:account] # instead of :account_id
+# => InputSanitizer::KeyNotAllowedError: Key not allowed: account
+# => ...
+```
 
 
 ## Contributing
