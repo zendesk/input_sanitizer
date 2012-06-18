@@ -1,3 +1,4 @@
+require 'input_sanitizer/restricted_hash'
 require 'input_sanitizer/default_converters'
 
 class InputSanitizer::Sanitizer
@@ -5,7 +6,7 @@ class InputSanitizer::Sanitizer
     @data = symbolize_keys(data)
     @performed = false
     @errors = []
-    @cleaned = {}
+    @cleaned = InputSanitizer::RestrictedHash.new(self.class.fields.keys)
   end
 
   def [](field)
@@ -20,7 +21,7 @@ class InputSanitizer::Sanitizer
       clean_field(field, type, required)
     end
     @performed = true
-    @cleaned
+    @cleaned.freeze
   end
 
   def valid?

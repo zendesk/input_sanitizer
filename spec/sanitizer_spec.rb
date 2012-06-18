@@ -45,6 +45,18 @@ describe InputSanitizer::Sanitizer do
       cleaned.should_not have_key(:d)
     end
 
+    it "freezes cleaned hash" do
+      @params = {}
+
+      cleaned.should be_frozen
+    end
+
+    it "uses RestrictedHash" do
+      @params = {}
+
+      lambda{cleaned[:does_not_exist]}.should raise_error(KeyError)
+    end
+
     it "includes specified keys and strips rest" do
       @params = {"d" => 3, "x" => "ddd"}
 
