@@ -74,7 +74,8 @@ class InputSanitizer::Sanitizer
 
   def self.custom(*keys)
     options = keys.pop
-    converter = options[:converter]
+    converter = options.delete(:converter)
+    keys.push(options)
     raise "You did not define a converter for a custom type" if converter == nil
     self.set_keys_to_type(keys, converter)
   end

@@ -24,6 +24,10 @@ class RequiredParameters < BasicSanitizer
   integer :is_nice, :required => true
 end
 
+class RequiredCustom < BasicSanitizer
+  custom :c1, :required => true, :converter => lambda { |v| v }
+end
+
 describe InputSanitizer::Sanitizer do
   let(:sanitizer) { BasicSanitizer.new(@params) }
 
@@ -219,6 +223,15 @@ describe InputSanitizer::Sanitizer do
       sanitizer = RequiredParameters.new({})
       error = sanitizer.errors[0]
       error[:type].should == :missing
+    end
+
+    it "handles required custom params" do
+      sanitizer = RequiredCustom.new({})
+
+      sanitizer.should_not be_valid
+      error = sanitizer.errors[0]
+      error[:type].should == :missing
+      error[:field].should == :c1
     end
   end
 end
