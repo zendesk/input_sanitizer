@@ -214,5 +214,11 @@ describe InputSanitizer::Sanitizer do
       errors[0][:description].should == "invalid integer"
       errors[0][:value].should == "mike"
     end
+
+    it "returns error type missing if value is missing" do
+      sanitizer = RequiredParameters.new({})
+      error = sanitizer.errors[0]
+      error[:type].should == :missing
+    end
   end
 end

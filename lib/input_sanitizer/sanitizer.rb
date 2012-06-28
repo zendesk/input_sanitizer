@@ -105,21 +105,21 @@ class InputSanitizer::Sanitizer
         add_error(field, :invalid_value, @data[field], ex.message)
       end
     elsif required
-      add_missing(field, type)
+      add_missing(field)
     end
   end
 
-  def add_error(field, type, value, description = nil)
+  def add_error(field, error_type, value, description = nil)
     @errors << {
       :field => field,
-      :type => type,
+      :type => error_type,
       :value => value,
       :description => description
     }
   end
 
-  def add_missing(field, type)
-    add_error(field, type, nil, nil)
+  def add_missing(field)
+    add_error(field, :missing, nil, nil)
   end
 
   def convert(field, type)
