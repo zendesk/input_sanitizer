@@ -29,14 +29,14 @@ class PersonSanitizer < InputSanitizer::Sanitizer
 end
 
 # filters unwanted parameters
-sanitizer = UpdatePerson.new({:account_id => 1, :name => "John"})
+sanitizer = PersonSanitizer.new({:account_id => 1, :name => "John"})
 sanitizer.cleaned() # => {:name => "John"}
 
 # provides key access
 sanitizer[:name] # => "John"
 
 # also provides shortcut method, same as new({}).cleaned
-UpdatePerson.clean({:account_id => 1})
+PersonSanitizer.clean({:account_id => 1})
 
 # supports inheritance
 class PrivilegedSanitizer < PersonSanitizer
