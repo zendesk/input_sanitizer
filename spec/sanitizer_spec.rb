@@ -37,6 +37,14 @@ describe InputSanitizer::Sanitizer do
       BasicSanitizer.any_instance.should_receive(:cleaned).and_return(clean_data)
       BasicSanitizer.clean({}).should be(clean_data)
     end
+
+    it "returns an empty hash for no arguments" do
+      BasicSanitizer.clean().should eq({})
+    end
+
+    it "returns an empty hash for nil" do
+      BasicSanitizer.clean(nil).should eq({})
+    end
   end
 
   describe "#cleaned" do

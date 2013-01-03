@@ -9,7 +9,8 @@ class InputSanitizer::Sanitizer
     @cleaned = InputSanitizer::RestrictedHash.new(self.class.fields.keys)
   end
 
-  def self.clean(data)
+  def self.clean(data={})
+    return {} if data.nil?
     new(data).cleaned
   end
 
