@@ -10,7 +10,7 @@ class InputSanitizer::Sanitizer
   end
 
   def self.clean(data={})
-    return {} if data.nil?
+    return InputSanitizer::RestrictedHash.new([]) if data.nil?
     new(data).cleaned
   end
 
