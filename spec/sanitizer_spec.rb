@@ -28,15 +28,51 @@ class RequiredCustom < BasicSanitizer
   custom :c1, :required => true, :converter => lambda { |v| v }
 end
 
+shared_examples "proper InputSanitizer result" do
+  it 'is an instance of RestrictedHash' do
+    cleaned.class.should be InputSanitizer::RestrictedHash
+  end
+end
+
 describe InputSanitizer::Sanitizer do
+
   let(:sanitizer) { BasicSanitizer.new(@params) }
+  let(:cleaned) { BasicSanitizer.clean(input) }
 
   describe ".clean" do
-    it "returns cleaned data" do
-      clean_data = mock()
-      BasicSanitizer.any_instance.should_receive(:cleaned).and_return(clean_data)
-      BasicSanitizer.clean({}).should be(clean_data)
+
+    context "for empty parameters" do
+
+      let(:input) { {} }
+      it_behaves_like "proper InputSanitizer result"
+
+      it "returns cleaned data" do
+        BasicSanitizer.any_instance.should_receive(:cleaned).and_call_original
+        cleaned.should eq({})
+      end
     end
+
+    context "for a nil parameters" do
+
+      let(:input) { nil }
+      it_behaves_like "proper InputSanitizer result"
+
+      it "returns an empty hash for nil" do
+        cleaned.should eq({})
+      end
+    end
+
+    context "for no arguments" do
+
+      let(:cleaned) { BasicSanitizer.clean() }
+      it_behaves_like "proper InputSanitizer result"
+
+      it "returns an empty hash for no arguments" do
+        cleaned.should eq({})
+      end
+
+    end
+
   end
 
   describe "#cleaned" do
@@ -122,7 +158,7 @@ describe InputSanitizer::Sanitizer do
     it "raises an error when converter is not defined" do
       expect do
         BrokenCustomSanitizer.custom(:x)
-      end.should raise_error
+      end.to raise_error
     end
   end
 
