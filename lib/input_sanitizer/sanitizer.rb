@@ -45,6 +45,11 @@ class InputSanitizer::Sanitizer
       :date => InputSanitizer::DateConverter.new,
       :time => InputSanitizer::TimeConverter.new,
       :boolean => InputSanitizer::BooleanConverter.new,
+      :integer_or_blank => InputSanitizer::IntegerConverter.new.extend(InputSanitizer::AllowNil),
+      :string_or_blank => InputSanitizer::StringConverter.new.extend(InputSanitizer::AllowNil),
+      :date_or_blank => InputSanitizer::DateConverter.new.extend(InputSanitizer::AllowNil),
+      :time_or_blank => InputSanitizer::TimeConverter.new.extend(InputSanitizer::AllowNil),
+      :boolean_or_blank => InputSanitizer::BooleanConverter.new.extend(InputSanitizer::AllowNil),
     }
   end
 

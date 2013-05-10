@@ -122,7 +122,7 @@ describe InputSanitizer::Sanitizer do
     it "raises an error when converter is not defined" do
       expect do
         BrokenCustomSanitizer.custom(:x)
-      end.should raise_error
+      end.to raise_error
     end
   end
 
