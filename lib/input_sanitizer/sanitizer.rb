@@ -57,24 +57,12 @@ class InputSanitizer::Sanitizer
     subclass.fields = self.fields.dup
   end
 
-  def self.string(*keys)
-    set_keys_to_type(keys, :string)
-  end
-
-  def self.integer(*keys)
-    set_keys_to_type(keys, :integer)
-  end
-
-  def self.boolean(*keys)
-    set_keys_to_type(keys, :boolean)
-  end
-
-  def self.date(*keys)
-    set_keys_to_type(keys, :date)
-  end
-
-  def self.time(*keys)
-    set_keys_to_type(keys, :time)
+  converters.keys.each do |name|
+    class_eval <<-END
+      def self.#{name}(*keys)
+        set_keys_to_type(keys, :#{name})
+      end
+    END
   end
 
   def self.custom(*keys)

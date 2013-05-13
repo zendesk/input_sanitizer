@@ -1,14 +1,4 @@
 module InputSanitizer
-  module AllowNil
-    def call(value)
-      if value.nil? || value == ""
-        nil
-      else
-        super(value)
-      end
-    end
-  end
-
   class PositiveIntegerConverter < IntegerConverter
     def call(value)
       val = super

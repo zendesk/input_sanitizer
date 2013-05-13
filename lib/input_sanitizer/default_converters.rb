@@ -78,4 +78,14 @@ module InputSanitizer
       end
     end
   end
+
+  module AllowNil
+    def call(value)
+      if value.nil? || value == ""
+        nil
+      else
+        super(value)
+      end
+    end
+  end
 end
