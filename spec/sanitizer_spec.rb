@@ -28,6 +28,11 @@ class RequiredCustom < BasicSanitizer
   custom :c1, :required => true, :converter => lambda { |v| v }
 end
 
+class DefaultParameters < BasicSanitizer
+  integer :funky_number, :default => 5
+  custom :fixed_stuff, :converter => lambda {|v| v }, :default => "default string"
+end
+
 describe InputSanitizer::Sanitizer do
   let(:sanitizer) { BasicSanitizer.new(@params) }
 
@@ -104,6 +109,32 @@ describe InputSanitizer::Sanitizer do
 
       cleaned.should have_key(:is_nice)
       cleaned[:is_nice].should == 42
+    end
+
+    context "when sanitizer is initialized with default values" do
+      context "when paremeters are not overwriten" do
+        let(:sanitizer) { DefaultParameters.new({}) }
+
+        it "returns default value for non custom key" do
+          sanitizer.cleaned[:funky_number].should == 5
+        end
+
+        it "returns default value for custom key" do
+          sanitizer.cleaned[:fixed_stuff].should == "default string"
+        end
+      end
+
+      context "when parameters are overwriten" do
+        let(:sanitizer) { DefaultParameters.new({ :funky_number => 2, :fixed_stuff => "fixed" }) }
+
+        it "returns default value for non custom key" do
+          sanitizer.cleaned[:funky_number].should == 2
+        end
+
+        it "returns default value for custom key" do
+          sanitizer.cleaned[:fixed_stuff].should == "fixed"
+        end
+      end
     end
 
   end
