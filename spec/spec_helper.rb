@@ -1,7 +1,9 @@
 require 'bundler'
 Bundler.setup(:test)
 
-require 'simplecov'
-SimpleCov.start unless ENV['CI'] == 'true'
+unless ENV['CI']
+  require 'simplecov'
+  SimpleCov.start
+end
 
 require 'input_sanitizer'
