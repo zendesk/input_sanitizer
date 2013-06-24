@@ -1,4 +1,5 @@
 require 'time'
+require 'date'
 
 module InputSanitizer
   class ConversionError < Exception
