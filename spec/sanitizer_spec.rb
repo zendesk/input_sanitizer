@@ -38,7 +38,7 @@ describe InputSanitizer::Sanitizer do
 
   describe ".clean" do
     it "returns cleaned data" do
-      clean_data = mock()
+      clean_data = double
       BasicSanitizer.any_instance.should_receive(:cleaned).and_return(clean_data)
       BasicSanitizer.clean({}).should be(clean_data)
     end
