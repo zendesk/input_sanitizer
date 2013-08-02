@@ -39,6 +39,10 @@ describe InputSanitizer::CommaJoinedIntegersConverter do
     converter.call("1,2,3,5").should == [1, 2, 3, 5]
   end
 
+  it "converts to array if given an integer" do
+    converter.call(7).should == [7]
+  end
+
   it "raises on invalid character" do
     lambda { converter.call(":") }.should raise_error(InputSanitizer::ConversionError)
   end
