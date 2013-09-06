@@ -81,14 +81,26 @@ describe InputSanitizer::TimeConverter do
     converter.call("2012-05-15 13:42:54").should == t
     converter.call("2012-05-15T13:42:54").should == t
     converter.call("20120515134254").should == t
+  end
 
+  it "works with miliseconds" do
+    t = Time.utc(2012, 5, 15, 13, 42, 54)
+    converter.call("2012-05-15 13:42:54.000").should == t
+    converter.call("2012-05-15T13:42:54.000").should == t
+    converter.call("20120515134254000").should == t
+  end
+
+  it "works with Z at the end" do
+    t = Time.utc(2012, 5, 15, 13, 42, 54)
+    converter.call("2012-05-15 13:42:54.000Z").should == t
+    converter.call("2012-05-15T13:42:54.000Z").should == t
+    converter.call("20120515134254000Z").should == t
   end
 
   it "does not require time part" do
     converter.call("2012-05-15 13:42").should == Time.utc(2012, 5, 15, 13, 42)
     converter.call("2012-05-15 13").should == Time.utc(2012, 5, 15, 13)
     converter.call("2012-05-15").should == Time.utc(2012, 5, 15)
-
   end
 
   it "raises error if can format is wrong" do
