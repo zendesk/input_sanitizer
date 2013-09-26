@@ -60,6 +60,8 @@ module InputSanitizer
       '0' => false,
       'yes' => true,
       'no' => false,
+      1 => true,
+      0 => false,
     }
 
     def call(value)
