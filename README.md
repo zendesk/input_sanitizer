@@ -26,6 +26,7 @@ class PersonSanitizer < InputSanitizer::Sanitizer
   integer :height
   float :weight
   date :birthday
+  custom :sex, :converter => SpecificValuesConverter.new(%w(male female other))
 end
 
 # filters unwanted parameters
@@ -40,7 +41,7 @@ PersonSanitizer.clean({:account_id => 1})
 
 # supports inheritance
 class PrivilegedSanitizer < PersonSanitizer
-  integer :account_id
+  integer :account_id, :required => true
 end
 
 PrivilegedSanitizer.clean({:account_id => 1})
@@ -50,8 +51,8 @@ PrivilegedSanitizer.clean({:account_id => 1})
 PrivilegedSanitizer.clean({:account_id => '1'})
 # => {:account_id => 1}
 
-PrivilegedSanitizer.clean({:birthday => '1986-10-06'})
-# => {:birthday => Date.new(1986, 10, 6)}
+PrivilegedSanitizer.clean({:account_id => '1', :birthday => '1986-10-06'})
+# => {:account_id => 1, :birthday => Date.new(1986, 10, 6)}
 
 # it prevents obvious errors
 data = PrivilegedSanitizer.clean({:account_id => 3})
