@@ -111,4 +111,9 @@ describe InputSanitizer::TimeConverter do
   it "raises error if date is wrong" do
     lambda { converter.call("2012-02-32") }.should raise_error(InputSanitizer::ConversionError)
   end
+
+  it "allows the instance of Time" do
+    t = Time.now
+    converter.call(t).should == t.utc
+  end
 end
