@@ -33,7 +33,7 @@ module InputSanitizer
   end
 
   class TimeConverter
-    ISO_RE = /\A\d{4}-?\d{2}-?\d{2}([T ]?\d{2}(:?\d{2}(:?\d{2}((\.)?000(Z)?)?)?)?)?\Z/
+    ISO_RE = /\A\d{4}-?\d{2}-?\d{2}([T ]?\d{2}(:?\d{2}(:?\d{2}((\.)?(000)?(Z)?)?)?)?)?\Z/
 
     def call(value)
       case value
