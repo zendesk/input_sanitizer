@@ -97,6 +97,13 @@ describe InputSanitizer::TimeConverter do
     converter.call("20120515134254000Z").should == t
   end
 
+  it "works with Z at the end without miliseconds" do
+    t = Time.utc(2012, 5, 15, 13, 42, 54)
+    converter.call("2012-05-15 13:42:54Z").should == t
+    converter.call("2012-05-15T13:42:54Z").should == t
+    converter.call("20120515134254Z").should == t
+  end
+
   it "does not require time part" do
     converter.call("2012-05-15 13:42").should == Time.utc(2012, 5, 15, 13, 42)
     converter.call("2012-05-15 13").should == Time.utc(2012, 5, 15, 13)
@@ -109,5 +116,10 @@ describe InputSanitizer::TimeConverter do
 
   it "raises error if date is wrong" do
     lambda { converter.call("2012-02-32") }.should raise_error(InputSanitizer::ConversionError)
+  end
+
+  it "allows the instance of Time" do
+    t = Time.now
+    converter.call(t).should == t.utc
   end
 end
