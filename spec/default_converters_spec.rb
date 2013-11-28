@@ -94,6 +94,7 @@ describe InputSanitizer::TimeConverter do
     t = Time.utc(2012, 5, 15, 13, 42, 54)
     converter.call("2012-05-15 13:42:54.000Z").should == t
     converter.call("2012-05-15T13:42:54.000Z").should == t
+   converter.call("2012-05-15T13:42:54Z").should == t
     converter.call("20120515134254000Z").should == t
   end
 
