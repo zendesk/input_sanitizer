@@ -1,11 +1,19 @@
 require 'spec_helper'
 
+class NestedSanitizer < InputSanitizer::Sanitizer
+  integer :foo
+end
+
 class BasicSanitizer < InputSanitizer::Sanitizer
   string :x, :y, :z
+  integer :namespaced, :namespace => :value
+  integer :array, :collection => true
+  integer :namespaced_array, :collection => true, :namespace => :value
   integer :num
   date :birthday
   time :updated_at
   custom :cust1, :cust2, :converter => lambda { |v| v.reverse }
+  nested :stuff, :sanitizer => NestedSanitizer, :collection => true, :namespace => :nested
 end
 
 class BrokenCustomSanitizer < InputSanitizer::Sanitizer
@@ -88,6 +96,30 @@ describe InputSanitizer::Sanitizer do
       cleaned.should_not have_key(:d)
     end
 
+    it "preserves namespace" do
+      value = { :value => 5 }
+      @params = { :namespaced => value }
+
+      cleaned[:namespaced].should eq(value)
+    end
+
+    it "maps values for collection fields" do
+      numbers = [3, 5, 6]
+      @params = { :array => numbers }
+
+      cleaned[:array].should eq(numbers)
+    end
+
+    it "maps values for collection fields with namespace" do
+      numbers = [
+        { :value => 2 },
+        { :value => 5 }
+      ]
+      @params = { :namespaced_array => numbers }
+
+      cleaned[:namespaced_array].should eq(numbers)
+    end
+
     it "silently discards cast errors" do
       @params = {:num => "f"}
 
@@ -154,6 +186,25 @@ describe InputSanitizer::Sanitizer do
       expect do
         BrokenCustomSanitizer.custom(:x)
       end.to raise_error
+    end
+  end
+
+  describe ".nested" do
+    let(:sanitizer) { BasicSanitizer.new(@params) }
+    let(:cleaned) { sanitizer.cleaned }
+
+    it "sanitizes nested values" do
+      nested = [
+        { :nested => { :foo => "5" } },
+        { :nested => { :foo => 8 } },
+      ]
+      @params = { :stuff => nested }
+
+      expected = [
+        { :nested => { :foo => 5 } },
+        { :nested => { :foo => 8 } },
+      ]
+      cleaned[:stuff].should eq(expected)
     end
   end
 

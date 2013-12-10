@@ -22,8 +22,10 @@ class InputSanitizer::Sanitizer
     self.class.fields.each do |field, hash|
       type = hash[:type]
       required = hash[:options][:required]
+      collection = hash[:options][:collection]
+      namespace = hash[:options][:namespace]
       default = hash[:options][:default]
-      clean_field(field, type, required, default)
+      clean_field(field, type, required, collection, namespace, default)
     end
     @performed = true
     @cleaned.freeze
@@ -74,6 +76,17 @@ class InputSanitizer::Sanitizer
     self.set_keys_to_type(keys, converter)
   end
 
+  def self.nested(*keys)
+    options = keys.pop
+    sanitizer = options.delete(:sanitizer)
+    keys.push(options)
+    raise "You did not define a sanitizer for nested value" if sanitizer == nil
+    converter = lambda { |value|
+      sanitizer.clean(value)
+    }
+    self.set_keys_to_type(keys, converter)
+  end
+
   protected
   def self.fields
     @fields ||= {}
@@ -92,10 +105,10 @@ class InputSanitizer::Sanitizer
     array.last.is_a?(Hash) ? array.last : {}
   end
 
-  def clean_field(field, type, required, default)
+  def clean_field(field, type, required, collection, namespace, default)
     if @data.has_key?(field)
       begin
-        @cleaned[field] = convert(field, type)
+        @cleaned[field] = convert(field, type, collection, namespace)
       rescue InputSanitizer::ConversionError => ex
         add_error(field, :invalid_value, @data[field], ex.message)
       end
@@ -119,8 +132,22 @@ class InputSanitizer::Sanitizer
     add_error(field, :missing, nil, nil)
   end
 
-  def convert(field, type)
-    converter(type).call(@data[field])
+  def convert(field, type, collection, namespace)
+    if collection
+      @data[field].map { |v|
+        convert_single(type, v, namespace)
+      }
+    else
+      convert_single(type, @data[field], namespace)
+    end
+  end
+
+  def convert_single(type, value, namespace)
+    if namespace
+      { namespace => converter(type).call(value[namespace]) }
+    else
+      converter(type).call(value)
+    end
   end
 
   def converter(type)
