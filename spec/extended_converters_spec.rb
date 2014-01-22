@@ -44,6 +44,18 @@ describe InputSanitizer::CommaJoinedIntegersConverter do
   end
 end
 
+describe InputSanitizer::CommaJoinedStringsConverter do
+  let(:converter) { described_class.new }
+
+  it "parses to array of ids" do
+    converter.call("input,Sanitizer,ROCKS").should == ["input", "Sanitizer", "ROCKS"]
+  end
+
+  it "raises on invalid character" do
+    lambda { converter.call(":") }.should raise_error(InputSanitizer::ConversionError)
+  end
+end
+
 describe InputSanitizer::SpecificValuesConverter do
   let(:converter) { InputSanitizer::SpecificValuesConverter.new([:a, :b]) }
 
