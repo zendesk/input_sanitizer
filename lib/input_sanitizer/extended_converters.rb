@@ -20,6 +20,19 @@ module InputSanitizer
     end
   end
 
+  class CommaJoinedStringsConverter
+    def call(value)
+      non_valid = value.gsub(/[a-zA-Z,]/, "")
+      if non_valid.empty?
+        parts = value.split(",").map(&:to_s)
+      else
+        invalid_chars = non_valid.split(//)
+        invalid_chars_desc = invalid_chars.join(", ")
+        raise InputSanitizer::ConversionError.new("Invalid chars: #{invalid_chars_desc}")
+      end
+    end
+  end
+
   class SpecificValuesConverter
     def initialize(values)
       @valid_values = values
