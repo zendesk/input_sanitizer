@@ -24,7 +24,6 @@ class PersonSanitizer < InputSanitizer::Sanitizer
   string :name
   string :address
   integer :height
-  float :weight
   date :birthday
 end
 
