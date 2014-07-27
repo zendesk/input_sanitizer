@@ -7,3 +7,4 @@ unless ENV['CI']
 end
 
 require 'input_sanitizer'
+require 'pry'
