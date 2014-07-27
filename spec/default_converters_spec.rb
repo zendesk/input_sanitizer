@@ -116,4 +116,8 @@ describe InputSanitizer::TimeConverter do
     t = Time.now
     converter.call(t).should == t.utc
   end
+
+  it "raises error if value is of invalid type" do
+    lambda { converter.call({}) }.should raise_error(InputSanitizer::ConversionError)
+  end
 end
