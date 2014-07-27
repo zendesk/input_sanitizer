@@ -19,7 +19,6 @@ Or install it yourself as:
 ## Usage
 
 ```ruby
-
 class PersonSanitizer < InputSanitizer::Sanitizer
   string :name
   string :address
@@ -56,7 +55,15 @@ PrivilegedSanitizer.clean({:birthday => '1986-10-06'})
 data = PrivilegedSanitizer.clean({:account_id => 3})
 data[:account] # instead of :account_id
 # => InputSanitizer::KeyNotAllowedError: Key not allowed: account
-# => ...
+
+# supports custom value converters
+class SomethingSanitizer < InputSanitizer::Sanitizer
+  custom :backward, :converter => lambda { |v| v.reverse }
+  integer :version
+  custom :name, :provide => :version, :converter => lambda { |name, version|
+    version < 3 ? name.downcase : name
+  }
+end
 ```
 
 

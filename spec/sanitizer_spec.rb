@@ -14,6 +14,9 @@ class BasicSanitizer < InputSanitizer::Sanitizer
   time :updated_at
   custom :cust1, :cust2, :converter => lambda { |v| v.reverse }
   nested :stuff, :sanitizer => NestedSanitizer, :collection => true, :namespace => :nested
+  custom :custom3, :provide => :num, :converter => lambda { |v, num|
+    num == 1 ? v.reverse : v
+  }
 end
 
 class BrokenCustomSanitizer < InputSanitizer::Sanitizer
@@ -186,6 +189,14 @@ describe InputSanitizer::Sanitizer do
       expect do
         BrokenCustomSanitizer.custom(:x)
       end.to raise_error
+    end
+
+    it "provides the converter with requested value" do
+      @params = { :custom3 => 'three', :num => 1 }
+      cleaned.should have_key(:custom3)
+      cleaned.should have_key(:num)
+      cleaned[:custom3].should eq('eerht')
+      cleaned[:num].should eq(1)
     end
   end
 
