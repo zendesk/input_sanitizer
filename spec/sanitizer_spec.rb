@@ -135,7 +135,7 @@ describe InputSanitizer::Sanitizer do
 
       cleaned.should have_key(:num)
       cleaned[:num].should == 23
-      cleaned[:is_nice].should be_false
+      cleaned[:is_nice].should eq(false)
     end
 
     it "overrides inherited fields" do
@@ -186,9 +186,9 @@ describe InputSanitizer::Sanitizer do
     end
 
     it "raises an error when converter is not defined" do
-      expect do
+      lambda do
         BrokenCustomSanitizer.custom(:x)
-      end.to raise_error
+      end.should raise_error
     end
 
     it "provides the converter with requested value" do
