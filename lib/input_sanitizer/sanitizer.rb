@@ -25,7 +25,8 @@ class InputSanitizer::Sanitizer
       collection = hash[:options][:collection]
       namespace = hash[:options][:namespace]
       default = hash[:options][:default]
-      clean_field(field, type, required, collection, namespace, default)
+      provide = hash[:options][:provide]
+      clean_field(field, type, required, collection, namespace, default, provide)
     end
     @performed = true
     @cleaned.freeze
@@ -105,10 +106,10 @@ class InputSanitizer::Sanitizer
     array.last.is_a?(Hash) ? array.last : {}
   end
 
-  def clean_field(field, type, required, collection, namespace, default)
+  def clean_field(field, type, required, collection, namespace, default, provide)
     if @data.has_key?(field)
       begin
-        @cleaned[field] = convert(field, type, collection, namespace)
+        @cleaned[field] = convert(field, type, collection, namespace, provide)
       rescue InputSanitizer::ConversionError => ex
         add_error(field, :invalid_value, @data[field], ex.message)
       end
@@ -132,21 +133,29 @@ class InputSanitizer::Sanitizer
     add_error(field, :missing, nil, nil)
   end
 
-  def convert(field, type, collection, namespace)
+  def convert(field, type, collection, namespace, provide)
     if collection
       @data[field].map { |v|
-        convert_single(type, v, namespace)
+        convert_single(type, v, namespace, provide)
       }
     else
-      convert_single(type, @data[field], namespace)
+      convert_single(type, @data[field], namespace, provide)
     end
   end
 
-  def convert_single(type, value, namespace)
+  def convert_single(type, value, namespace, provide)
     if namespace
-      { namespace => converter(type).call(value[namespace]) }
+      { namespace => convert_value(converter(type), value[namespace], provide) }
     else
-      converter(type).call(value)
+      convert_value(converter(type), value, provide)
+    end
+  end
+
+  def convert_value(converter, value, provide)
+    if provide
+      converter.call(value, @data[provide])
+    else
+      converter.call(value)
     end
   end
 

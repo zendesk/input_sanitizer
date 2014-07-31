@@ -32,35 +32,35 @@ describe InputSanitizer::BooleanConverter do
   let(:converter) { InputSanitizer::BooleanConverter.new }
 
   it "casts 'true' to true" do
-    converter.call('true').should be_true
+    converter.call('true').should eq(true)
   end
 
   it "casts true to true" do
-    converter.call(true).should be_true
+    converter.call(true).should eq(true)
   end
 
   it "casts '1' to true" do
-    converter.call('1').should be_true
+    converter.call('1').should eq(true)
   end
 
   it "casts 'yes' to true" do
-    converter.call('yes').should be_true
+    converter.call('yes').should eq(true)
   end
 
   it "casts 'false' to false" do
-    converter.call('false').should be_false
+    converter.call('false').should eq(false)
   end
 
   it "casts false to false" do
-    converter.call(false).should be_false
+    converter.call(false).should eq(false)
   end
 
   it "casts '0' to false" do
-    converter.call('0').should be_false
+    converter.call('0').should eq(false)
   end
 
   it "casts 'no' to false" do
-    converter.call('no').should be_false
+    converter.call('no').should eq(false)
   end
 
   it "raises error if cannot cast" do
@@ -115,5 +115,9 @@ describe InputSanitizer::TimeConverter do
   it "allows the instance of Time" do
     t = Time.now
     converter.call(t).should == t.utc
+  end
+
+  it "raises error if value is of invalid type" do
+    lambda { converter.call({}) }.should raise_error(InputSanitizer::ConversionError)
   end
 end
