@@ -1,5 +1,6 @@
 require 'input_sanitizer/restricted_hash'
 require 'input_sanitizer/default_converters'
+require 'input_sanitizer/sanitizer/clean_field'
 
 class InputSanitizer::Sanitizer
   def initialize(data)
@@ -19,15 +20,9 @@ class InputSanitizer::Sanitizer
 
   def cleaned
     return @cleaned if @performed
-    self.class.fields.each do |field, hash|
-      type = hash[:type]
-      required = hash[:options][:required]
-      collection = hash[:options][:collection]
-      namespace = hash[:options][:namespace]
-      default = hash[:options][:default]
-      provide = hash[:options][:provide]
-      clean_field(field, type, required, collection, namespace, default, provide)
-    end
+
+    self.class.fields.each { |field, hash| clean_field(field, hash) }
+
     @performed = true
     @cleaned.freeze
   end
@@ -108,18 +103,17 @@ class InputSanitizer::Sanitizer
     array.last.is_a?(Hash) ? array.last : {}
   end
 
-  def clean_field(field, type, required, collection, namespace, default, provide)
-    if @data.has_key?(field)
-      begin
-        @cleaned[field] = convert(field, type, collection, namespace, provide)
-      rescue InputSanitizer::ConversionError => ex
-        add_error(field, :invalid_value, @data[field], ex.message)
-      end
-    elsif default
-      @cleaned[field] = converter(type).call(default)
-    elsif required
-      add_missing(field)
-    end
+  def clean_field(field, hash)
+    @cleaned[field] = CleanField.call(hash[:options].merge(
+      :has_key => @data.has_key?(field),
+      :data => @data[field],
+      :type => hash[:type],
+      :provide => @data[hash[:options][:provide]]
+    ))
+  rescue InputSanitizer::ConversionError => error
+    add_error(field, :invalid_value, @data[field], error.message)
+  rescue InputSanitizer::ValueMissingError => error
+    add_missing(field)
   end
 
   def add_error(field, error_type, value, description = nil)
@@ -133,36 +127,6 @@ class InputSanitizer::Sanitizer
 
   def add_missing(field)
     add_error(field, :missing, nil, nil)
-  end
-
-  def convert(field, type, collection, namespace, provide)
-    if collection
-      @data[field].map { |v|
-        convert_single(type, v, namespace, provide)
-      }
-    else
-      convert_single(type, @data[field], namespace, provide)
-    end
-  end
-
-  def convert_single(type, value, namespace, provide)
-    if namespace
-      { namespace => convert_value(converter(type), value[namespace], provide) }
-    else
-      convert_value(converter(type), value, provide)
-    end
-  end
-
-  def convert_value(converter, value, provide)
-    if provide
-      converter.call(value, @data[provide])
-    else
-      converter.call(value)
-    end
-  end
-
-  def converter(type)
-    type.respond_to?(:call) ? type : self.class.converters[type]
   end
 
   def symbolize_keys(data)

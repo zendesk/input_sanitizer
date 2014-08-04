@@ -2,8 +2,8 @@ require 'time'
 require 'date'
 
 module InputSanitizer
-  class ConversionError < Exception
-  end
+  class ConversionError < Exception; end
+  class ValueMissingError < Exception; end
 
   class IntegerConverter
     def call(value)

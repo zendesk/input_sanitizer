@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     input_sanitizer (0.2.4)
+      method_struct
 
 GEM
   remote: https://rubygems.org/
@@ -10,6 +11,7 @@ GEM
     diff-lcs (1.2.5)
     docile (1.1.5)
     method_source (0.8.2)
+    method_struct (0.1.5)
     multi_json (1.10.1)
     pry (0.10.0)
       coderay (~> 1.1.0)
