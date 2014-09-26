@@ -55,6 +55,10 @@ describe InputSanitizer::CommaJoinedStringsConverter do
     converter.call("input,Sanitizer,ROCKS").should == ["input", "Sanitizer", "ROCKS"]
   end
 
+  it "allows underscores" do
+    converter.call("input_sanitizer,rocks").should == ["input_sanitizer", "rocks"]
+  end
+
   it "raises on invalid character" do
     lambda { converter.call(":") }.should raise_error(InputSanitizer::ConversionError)
   end
