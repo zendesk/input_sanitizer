@@ -217,6 +217,13 @@ describe InputSanitizer::Sanitizer do
       ]
       cleaned[:stuff].should eq(expected)
     end
+
+    it "propagates errors" do
+      nested = [ { :nested => { :foo => "INVALID" } } ]
+      @params = { :stuff => nested }
+
+      sanitizer.should_not be_valid
+    end
   end
 
   describe ".converters" do

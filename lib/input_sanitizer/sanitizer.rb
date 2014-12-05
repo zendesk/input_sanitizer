@@ -83,7 +83,9 @@ class InputSanitizer::Sanitizer
     keys.push(options)
     raise "You did not define a sanitizer for nested value" if sanitizer == nil
     converter = lambda { |value|
-      sanitizer.clean(value)
+      instance = sanitizer.new(value)
+      raise InputSanitizer::ConversionError.new(instance.errors) unless instance.valid?
+      instance.cleaned
     }
     self.set_keys_to_type(keys, converter)
   end
