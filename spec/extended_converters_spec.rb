@@ -1,25 +1,6 @@
 require 'spec_helper'
 require 'input_sanitizer/extended_converters'
 
-describe InputSanitizer::AllowNil do
-  it "passes blanks" do
-    lambda { |_| 1 }.extend(InputSanitizer::AllowNil).call("").should be_nil
-  end
-
-  it "passes things the extended sanitizer passes" do
-    lambda { |_| :something }.extend(InputSanitizer::AllowNil).call(:stuff).
-      should eq(:something)
-  end
-
-  it "raises error if the extended sanitizer raises error" do
-    action = lambda do
-      lambda { |_| raise "Some error" }.extend(InputSanitizer::AllowNil).call(:stuff)
-    end
-
-    action.should raise_error
-  end
-end
-
 describe InputSanitizer::PositiveIntegerConverter do
   let(:converter) { InputSanitizer::PositiveIntegerConverter.new }
 
