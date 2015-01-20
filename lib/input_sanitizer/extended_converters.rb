@@ -16,7 +16,7 @@ module InputSanitizer
       else
         invalid_chars = non_valid.split(//)
         invalid_chars_desc = invalid_chars.join(", ")
-        raise InputSanitizer::ConversionError.new("Invalid chars: #{invalid_chars_desc}")
+        raise InputSanitizer::ConversionError.new("Invalid integers: #{invalid_chars_desc}")
       end
     end
   end
@@ -30,7 +30,7 @@ module InputSanitizer
       else
         invalid_chars = non_valid.split(//)
         invalid_chars_desc = invalid_chars.join(", ")
-        raise InputSanitizer::ConversionError.new("Invalid chars: #{invalid_chars_desc}")
+        raise InputSanitizer::ConversionError.new("Invalid strings: #{invalid_chars_desc}")
       end
     end
   end
