@@ -5,11 +5,11 @@ describe InputSanitizer::CommaJoinedStringsConverter do
   let(:converter) { described_class.new }
 
   it "parses to array of ids" do
-    converter.call("input,Sanitizer,ROCKS").should == ["input", "Sanitizer", "ROCKS"]
+    converter.call("input,Sanitizer,ROCKS").should eq(["input", "Sanitizer", "ROCKS"])
   end
 
   it "allows underscores" do
-    converter.call("input_sanitizer,rocks").should == ["input_sanitizer", "rocks"]
+    converter.call("input_sanitizer,rocks").should eq(["input_sanitizer", "rocks"])
   end
 
   it "raises on invalid character" do

@@ -2,18 +2,22 @@ require 'spec_helper'
 require 'input_sanitizer/extended_converters/specific_values_converter'
 
 describe InputSanitizer::SpecificValuesConverter do
-  let(:converter) { InputSanitizer::SpecificValuesConverter.new([:a, :b]) }
+  let(:converter) { described_class.new(values) }
+  let(:values) { [:a, :b] }
 
   it "converts valid value to symbol" do
-    converter.call("b").should == :b
+    converter.call("b").should eq(:b)
   end
 
   it "raises on invalid value" do
     lambda { converter.call("c") }.should raise_error(InputSanitizer::ConversionError)
   end
 
-  it "converts valid value to string" do
-    converter = InputSanitizer::SpecificValuesConverter.new(["a", "b"])
-    converter.call("a").should == "a"
+  context "when specific values are strings" do
+    let(:values) { ["a", "b"] }
+
+    it "keeps given value as string" do
+      converter.call("a").should eq("a")
+    end
   end
 end

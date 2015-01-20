@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'input_sanitizer/extended_converters/positive_integer_converter'
 
 describe InputSanitizer::PositiveIntegerConverter do
-  let(:converter) { InputSanitizer::PositiveIntegerConverter.new }
+  let(:converter) { described_class.new }
 
   it "casts string to integer" do
     converter.call("3").should == 3
