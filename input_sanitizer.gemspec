@@ -16,6 +16,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = InputSanitizer::VERSION
 
+  gem.add_runtime_dependency "method_struct"
   gem.add_development_dependency "rspec"
   gem.add_development_dependency "simplecov"
   gem.add_development_dependency "pry"
