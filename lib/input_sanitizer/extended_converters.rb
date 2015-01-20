@@ -9,6 +9,8 @@ module InputSanitizer
 
   class CommaJoinedIntegersConverter
     def call(value)
+      return [value] if value.kind_of? Integer
+
       non_valid = value.gsub(/[0-9,]/, "")
       if non_valid.empty?
         parts = value.split(",").map(&:to_i)
