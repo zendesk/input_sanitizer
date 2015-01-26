@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-class TestedSanitizer < InputSanitizer::Sanitizer::V2
+class TestedSanitizer < InputSanitizer::V2::Sanitizer
   integer :array, :collection => true
   string :status, :allow => ['', 'current', 'past']
 
@@ -9,7 +9,7 @@ class TestedSanitizer < InputSanitizer::Sanitizer::V2
   boolean :bool_attribute
 end
 
-describe InputSanitizer::Sanitizer::V2 do
+describe InputSanitizer::V2::Sanitizer do
   let(:sanitizer) { TestedSanitizer.new(@params) }
   let(:cleaned) { sanitizer.cleaned }
 
