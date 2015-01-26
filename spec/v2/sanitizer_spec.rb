@@ -47,7 +47,6 @@ describe InputSanitizer::V2::Sanitizer do
     end
 
     it "is invalid when given a disallowed string" do
-      pending
       @params = { :status => 'current bad string' }
       sanitizer.should_not be_valid
     end
