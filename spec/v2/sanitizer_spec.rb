@@ -22,19 +22,6 @@ describe InputSanitizer::V2::Sanitizer do
     end
   end
 
-  describe "ommited fields" do
-    it "does not return these fields" do
-      pending
-      @params = {}
-      cleaned.should eq({})
-    end
-
-    it "is still valid" do
-      @params = {}
-      sanitizer.should be_valid
-    end
-  end
-
   describe "allow option" do
     it "is valid when given an allowed string" do
       @params = { :status => 'past' }
