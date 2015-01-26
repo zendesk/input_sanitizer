@@ -73,6 +73,12 @@ describe InputSanitizer::Sanitizer do
       cleaned.should_not have_key(:d)
     end
 
+    it "does not include ommited fields" do
+      @params = { "x" => 1, "z" => 3 }
+
+      cleaned.should_not have_key(:y)
+    end
+
     it "freezes cleaned hash" do
       @params = {}
 
