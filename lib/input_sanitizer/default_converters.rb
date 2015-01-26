@@ -4,6 +4,7 @@ require 'date'
 module InputSanitizer
   class ConversionError < Exception; end
   class ValueMissingError < Exception; end
+  class OptionalValueOmitted < StandardError; end
 
   class IntegerConverter
     def call(value)

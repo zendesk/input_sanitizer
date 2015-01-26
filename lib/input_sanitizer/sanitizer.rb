@@ -114,6 +114,7 @@ class InputSanitizer::Sanitizer
     add_error(field, :invalid_value, @data[field], error.message)
   rescue InputSanitizer::ValueMissingError => error
     add_missing(field)
+  rescue InputSanitizer::OptionalValueOmitted
   end
 
   def add_error(field, error_type, value, description = nil)

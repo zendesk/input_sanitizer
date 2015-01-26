@@ -6,6 +6,8 @@ CleanField = MethodStruct.new(:data, :has_key, :field, :type, :required, :collec
       converter.call(default)
     elsif required
       raise InputSanitizer::ValueMissingError
+    else
+      raise InputSanitizer::OptionalValueOmitted
     end
   end
 
