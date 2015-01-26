@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    input_sanitizer (0.2.5)
+    input_sanitizer (0.2.6)
       method_struct
 
 GEM
