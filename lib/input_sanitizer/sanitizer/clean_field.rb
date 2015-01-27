@@ -1,4 +1,4 @@
-CleanField = MethodStruct.new(:data, :has_key, :field, :type, :required, :collection, :namespace, :default, :provide, :allow) do
+CleanField = MethodStruct.new(:data, :has_key, :field, :converter, :required, :collection, :namespace, :default, :provide, :allow) do
   def call
     if has_key
       convert
@@ -36,9 +36,5 @@ CleanField = MethodStruct.new(:data, :has_key, :field, :type, :required, :collec
     else
       converter.call(value)
     end
-  end
-
-  def converter
-    type.respond_to?(:call) ? type : InputSanitizer::Sanitizer.converters[type]
   end
 end

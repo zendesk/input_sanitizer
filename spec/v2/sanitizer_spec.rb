@@ -49,19 +49,16 @@ describe InputSanitizer::V2::Sanitizer do
 
   describe "strict type checking" do
     it "is invalid when given string instead of integer" do
-      pending
       @params = { :integer_attribute => '1' }
       sanitizer.should_not be_valid
     end
 
     it "is invalid when given integer instead of string" do
-      pending
       @params = { :string_attribute => 0 }
       sanitizer.should_not be_valid
     end
 
     it "is invalid when given 'yes' as a bool" do
-      pending
       @params = { :bool_attribute => 'yes' }
       sanitizer.should_not be_valid
     end

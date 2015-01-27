@@ -56,20 +56,24 @@ class InputSanitizer::Sanitizer
     subclass.fields = self.fields.dup
   end
 
-  converters.keys.each do |name|
-    class_eval <<-END
-      def self.#{name}(*keys)
-        set_keys_to_type(keys, :#{name})
-      end
-    END
+  def self.initialize_types_dsl
+    converters.keys.each do |name|
+      class_eval <<-END
+        def self.#{name}(*keys)
+          set_keys_to_converter(keys, converters[:#{name}])
+        end
+      END
+    end
   end
+
+  initialize_types_dsl
 
   def self.custom(*keys)
     options = keys.pop
     converter = options.delete(:converter)
     keys.push(options)
     raise "You did not define a converter for a custom type" if converter == nil
-    self.set_keys_to_type(keys, converter)
+    self.set_keys_to_converter(keys, converter)
   end
 
   def self.nested(*keys)
@@ -82,7 +86,7 @@ class InputSanitizer::Sanitizer
       raise InputSanitizer::ConversionError.new(instance.errors) unless instance.valid?
       instance.cleaned
     }
-    self.set_keys_to_type(keys, converter)
+    self.set_keys_to_converter(keys, converter)
   end
 
   protected
@@ -107,8 +111,8 @@ class InputSanitizer::Sanitizer
     @cleaned[field] = CleanField.call(hash[:options].merge(
       :has_key => @data.has_key?(field),
       :data => @data[field],
-      :type => hash[:type],
-      :provide => @data[hash[:options][:provide]]
+      :converter => hash[:converter],
+      :provide => @data[hash[:options][:provide]],
     ))
   rescue InputSanitizer::ConversionError => error
     add_error(field, :invalid_value, @data[field], error.message)
@@ -137,10 +141,12 @@ class InputSanitizer::Sanitizer
     end
   end
 
-  def self.set_keys_to_type(keys, type)
-    opts = extract_options!(keys)
+  def self.set_keys_to_converter(keys, converter)
     keys.each do |key|
-      fields[key] = { :type => type, :options => opts }
+      fields[key] = {
+        :converter => converter,
+        :options => extract_options!(keys)
+      }
     end
   end
 end
