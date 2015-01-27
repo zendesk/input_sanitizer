@@ -28,9 +28,7 @@ describe InputSanitizer::V2::Sanitizer do
 
   describe "collections" do
     it "is invalid if collection is not an array" do
-      pending
       @params = { :array => {} }
-
       sanitizer.should_not be_valid
     end
   end

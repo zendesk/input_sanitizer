@@ -14,6 +14,7 @@ class InputSanitizer::V2::CleanField < MethodStruct.new(:data, :has_key, :field,
   private
   def convert
     if collection
+      raise InputSanitizer::TypeMismatchError.new(data, :array) unless data.respond_to?(:to_ary)
       convert_collection(data)
     else
       convert_single(data)
