@@ -8,12 +8,45 @@ class InputSanitizer::V2::Sanitizer < InputSanitizer::Sanitizer
   end
   initialize_types_dsl
 
+  def self.nested(*keys)
+    options = keys.pop
+    sanitizer = options.delete(:sanitizer)
+    keys.push(options)
+    raise "You did not define a sanitizer for nested value" if sanitizer == nil
+    converter = lambda { |value|
+      instance = sanitizer.new(value)
+      raise InputSanitizer::NestedError.new(instance.errors) unless instance.valid?
+      instance.cleaned
+    }
+    self.set_keys_to_converter(keys, converter)
+  end
+
   private
   def clean_field(field, hash)
-    super
-  rescue InputSanitizer::ValueNotAllowedError => error
-    add_error(field, :invalid_value, @data[field], error.message)
-  rescue InputSanitizer::TypeMismatchError => error
-    add_error(field, :type_mismatch, @data[field], error.message)
+    @cleaned[field] = InputSanitizer::V2::CleanField.call(hash[:options].merge(
+      :has_key => @data.has_key?(field),
+      :data => @data[field],
+      :converter => hash[:converter],
+      :provide => @data[hash[:options][:provide]],
+    ))
+  rescue InputSanitizer::OptionalValueOmitted
+  rescue InputSanitizer::ValidationError => error
+    @errors += handle_error(field, error)
+  end
+
+  def handle_error(field, error)
+    case error
+    when InputSanitizer::CollectionError
+      error.collection_errors.map do |index, error|
+        handle_error("#{field}/#{index}", error)
+      end
+    when InputSanitizer::NestedError
+      error.nested_errors.map do |error|
+        handle_error("#{field}#{error.field}", error)
+      end
+    else
+      error.field = "/#{field}"
+      Array(error)
+    end.flatten
   end
 end
