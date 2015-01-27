@@ -63,6 +63,13 @@ describe InputSanitizer::V2::Sanitizer do
       sanitizer.should_not be_valid
       sanitizer.errors.count.should eq(2)
     end
+
+    it "is invalid when given extra params in a nested sanitizer" do
+      @params = { :address => { :extra => 0 }, :tags => [ { :extra2 => 1 } ] }
+      sanitizer.should_not be_valid
+      sanitizer.errors[0].field.should eq('/address/extra')
+      sanitizer.errors[1].field.should eq('/tags/0/extra2')
+    end
   end
 
   describe "strict type checking" do

@@ -44,7 +44,7 @@ module InputSanitizer
     end
 
     def initialize(name)
-      @message = name
+      @field = name
     end
   end
 

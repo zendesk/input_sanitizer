@@ -6,7 +6,7 @@ class InputSanitizer::V2::Sanitizer < InputSanitizer::Sanitizer
 
     @data
       .reject { |key, _| self.class.fields.keys.include?(key) }
-      .each { |key, _| @errors << InputSanitizer::ExtraneousParamError.new(key) }
+      .each { |key, _| @errors << InputSanitizer::ExtraneousParamError.new("/#{key}") }
 
     @performed = true
     @cleaned.freeze
