@@ -1,4 +1,4 @@
-CleanField = MethodStruct.new(:data, :has_key, :field, :converter, :required, :collection, :namespace, :default, :provide, :allow) do
+CleanField = MethodStruct.new(:data, :has_key, :converter, :required, :collection, :namespace, :default, :provide, :allow) do
   def call
     if has_key
       convert

@@ -1,4 +1,4 @@
-class InputSanitizer::V2::CleanField < MethodStruct.new(:data, :has_key, :field, :converter, :required, :collection, :namespace, :default, :provide, :allow)
+class InputSanitizer::V2::CleanField < MethodStruct.new(:data, :has_key, :converter, :required, :collection, :namespace, :default, :provide, :allow)
   def call
     if has_key
       convert
