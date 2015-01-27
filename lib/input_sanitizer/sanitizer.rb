@@ -117,7 +117,7 @@ class InputSanitizer::Sanitizer
   rescue InputSanitizer::ConversionError => error
     add_error(field, :invalid_value, @data[field], error.message)
   rescue InputSanitizer::ValueMissingError => error
-    add_missing(field)
+    add_error(field, :missing, nil, nil)
   rescue InputSanitizer::OptionalValueOmitted
   end
 
@@ -128,10 +128,6 @@ class InputSanitizer::Sanitizer
       :value => value,
       :description => description
     }
-  end
-
-  def add_missing(field)
-    add_error(field, :missing, nil, nil)
   end
 
   def symbolize_keys(data)
