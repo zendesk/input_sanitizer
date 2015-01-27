@@ -99,10 +99,6 @@ class InputSanitizer::V1::Sanitizer
     array.last.is_a?(Hash) ? array.pop : {}
   end
 
-  def self.extract_options(array)
-    array.last.is_a?(Hash) ? array.last : {}
-  end
-
   def clean_field(field, hash)
     @cleaned[field] = InputSanitizer::V1::CleanField.call(hash[:options].merge(
       :has_key => @data.has_key?(field),
