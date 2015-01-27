@@ -2,12 +2,6 @@ require 'time'
 require 'date'
 
 module InputSanitizer
-  class ConversionError < Exception; end
-  class ValueMissingError < Exception; end
-  class ValueNotAllowedError < StandardError; end
-  class OptionalValueOmitted < StandardError; end
-  class TypeMismatchError < StandardError; end
-
   class IntegerConverter
     def call(value)
       cast = value.to_i

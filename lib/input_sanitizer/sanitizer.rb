@@ -1,3 +1,4 @@
+require 'input_sanitizer/errors'
 require 'input_sanitizer/restricted_hash'
 require 'input_sanitizer/default_converters'
 require 'input_sanitizer/sanitizer/clean_field'
