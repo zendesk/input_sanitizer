@@ -4,6 +4,7 @@ class InputSanitizer::V2::Sanitizer < InputSanitizer::Sanitizer
       :integer => InputSanitizer::V2::Types::IntegerCheck.new,
       :string => InputSanitizer::V2::Types::StringCheck.new,
       :boolean => InputSanitizer::V2::Types::BooleanCheck.new,
+      :datetime => InputSanitizer::V2::Types::DatetimeCheck.new,
     }
   end
   initialize_types_dsl

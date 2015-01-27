@@ -26,4 +26,12 @@ module InputSanitizer::V2::Types
       end
     end
   end
+
+  class DatetimeCheck
+    def call(value)
+      DateTime.parse(value)
+    rescue ArgumentError
+      raise InputSanitizer::TypeMismatchError.new(value, :datetime)
+    end
+  end
 end

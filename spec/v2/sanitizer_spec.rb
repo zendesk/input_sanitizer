@@ -20,6 +20,7 @@ class TestedSanitizer < InputSanitizer::V2::Sanitizer
   integer :integer_attribute
   string :string_attribute
   boolean :bool_attribute
+  datetime :datetime_attribute
 end
 
 describe InputSanitizer::V2::Sanitizer do
@@ -91,6 +92,32 @@ describe InputSanitizer::V2::Sanitizer do
       @params = { :bool_attribute => 'yes' }
       sanitizer.should_not be_valid
       sanitizer.errors[0].field.should eq('/bool_attribute')
+    end
+
+    it "is valid when given true as a bool" do
+      @params = { :bool_attribute => true }
+      sanitizer.should be_valid
+    end
+
+    it "is valid when given false as a bool" do
+      @params = { :bool_attribute => false }
+      sanitizer.should be_valid
+    end
+
+    it "is invalid when given an incorrect datetime" do
+      @params = { :datetime_attribute => "2014-08-2716:32:56Z" }
+      sanitizer.should_not be_valid
+      sanitizer.errors[0].field.should eq('/datetime_attribute')
+    end
+
+    it "is valid when given a correct datetime" do
+      @params = { :datetime_attribute => "2014-08-27T16:32:56Z" }
+      sanitizer.should be_valid
+    end
+
+    it "is valid when given a 'forever' timestamp" do
+      @params = { :datetime_attribute => "9999-12-31T00:00:00Z" }
+      sanitizer.should be_valid
     end
 
     describe "nested checking" do
