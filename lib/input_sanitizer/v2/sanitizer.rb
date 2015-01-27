@@ -1,4 +1,17 @@
 class InputSanitizer::V2::Sanitizer < InputSanitizer::Sanitizer
+  def cleaned
+    return @cleaned if @performed
+
+    self.class.fields.each { |field, hash| clean_field(field, hash) }
+
+    @data
+      .reject { |key, _| self.class.fields.keys.include?(key) }
+      .each { |key, _| @errors << InputSanitizer::ExtraneousParamError.new(key) }
+
+    @performed = true
+    @cleaned.freeze
+  end
+
   def self.converters
     {
       :integer => InputSanitizer::V2::Types::IntegerCheck.new,

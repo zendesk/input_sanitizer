@@ -340,4 +340,9 @@ describe InputSanitizer::Sanitizer do
       error[:field].should == :c1
     end
   end
+
+  it "is valid when given extra params" do
+    @params = { :extra => 'test' }
+    sanitizer.should be_valid
+  end
 end

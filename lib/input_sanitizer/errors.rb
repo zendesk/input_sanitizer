@@ -38,6 +38,16 @@ module InputSanitizer
     end
   end
 
+  class ExtraneousParamError < ValidationError
+    def code
+      :extraneous_param
+    end
+
+    def initialize(name)
+      @message = name
+    end
+  end
+
   class NestedError < ValidationError
     attr_reader :nested_errors
 

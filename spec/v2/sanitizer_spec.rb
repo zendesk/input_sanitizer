@@ -59,9 +59,9 @@ describe InputSanitizer::V2::Sanitizer do
 
   describe "strict param checking" do
     it "is invalid when given extra params" do
-      pending
-      @params = { :extra => 'test' }
+      @params = { :extra => 'test', :extra2 => 1 }
       sanitizer.should_not be_valid
+      sanitizer.errors.count.should eq(2)
     end
   end
 
