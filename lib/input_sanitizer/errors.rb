@@ -9,11 +9,13 @@ module InputSanitizer
   end
 
   class ConversionError < ValidationError; end
+
   class ValueMissingError < ValidationError
     def code
       :value_missing
     end
   end
+
   class ValueNotAllowedError < ValidationError
     def code
       :invalid_value
@@ -24,6 +26,7 @@ module InputSanitizer
       @message = message
     end
   end
+
   class TypeMismatchError < ValidationError
     def code
       :invalid_type
@@ -34,6 +37,7 @@ module InputSanitizer
       @message = type
     end
   end
+
   class NestedError < ValidationError
     attr_reader :nested_errors
 
@@ -41,6 +45,7 @@ module InputSanitizer
       @nested_errors = nested_errors
     end
   end
+
   class CollectionError < ValidationError
     attr_reader :collection_errors
 
