@@ -237,22 +237,22 @@ describe InputSanitizer::Sanitizer do
 
     it "includes :integer type" do
       sanitizer.converters.should have_key(:integer)
-      sanitizer.converters[:integer].should be_a(InputSanitizer::IntegerConverter)
+      sanitizer.converters[:integer].should be_a(InputSanitizer::V1::IntegerConverter)
     end
 
     it "includes :string type" do
       sanitizer.converters.should have_key(:string)
-      sanitizer.converters[:string].should be_a(InputSanitizer::StringConverter)
+      sanitizer.converters[:string].should be_a(InputSanitizer::V1::StringConverter)
     end
 
     it "includes :date type" do
       sanitizer.converters.should have_key(:date)
-      sanitizer.converters[:date].should be_a(InputSanitizer::DateConverter)
+      sanitizer.converters[:date].should be_a(InputSanitizer::V1::DateConverter)
     end
 
     it "includes :boolean type" do
       sanitizer.converters.should have_key(:boolean)
-      sanitizer.converters[:boolean].should be_a(InputSanitizer::BooleanConverter)
+      sanitizer.converters[:boolean].should be_a(InputSanitizer::V1::BooleanConverter)
     end
   end
 

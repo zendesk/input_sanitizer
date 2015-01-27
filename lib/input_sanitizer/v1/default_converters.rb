@@ -1,12 +1,12 @@
 require 'time'
 require 'date'
 
-module InputSanitizer
+module InputSanitizer::V1
   class IntegerConverter
     def call(value)
       cast = value.to_i
       if cast.to_s != value.to_s
-        raise ConversionError.new("invalid integer")
+        raise InputSanitizer::ConversionError.new("invalid integer")
       end
       cast
     end
@@ -22,10 +22,10 @@ module InputSanitizer
     ISO_RE = /\A\d{4}-?\d{2}-?\d{2}/
 
     def call(value)
-      raise ConversionError.new("invalid time") unless value =~ ISO_RE
+      raise InputSanitizer::ConversionError.new("invalid time") unless value =~ ISO_RE
       Date.parse(value)
     rescue ArgumentError
-      raise ConversionError.new("invalid iso8601 date")
+      raise InputSanitizer::ConversionError.new("invalid iso8601 date")
     end
   end
 
@@ -40,13 +40,13 @@ module InputSanitizer
         if value =~ ISO_RE
           strip_timezone(Time.parse(value))
         else
-          raise ConversionError.new("invalid time")
+          raise InputSanitizer::ConversionError.new("invalid time")
         end
       else
-        raise ConversionError.new("invalid time")
+        raise InputSanitizer::ConversionError.new("invalid time")
       end
     rescue ArgumentError
-      raise ConversionError.new("invalid time")
+      raise InputSanitizer::ConversionError.new("invalid time")
     end
 
     def strip_timezone(time)
@@ -81,7 +81,7 @@ module InputSanitizer
         message += " for true, or "
         message += falsy.join(", ")
         message += " for false."
-        raise ConversionError.new(message)
+        raise InputSanitizer::ConversionError.new(message)
       end
     end
   end

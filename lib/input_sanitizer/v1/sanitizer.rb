@@ -1,9 +1,4 @@
-require 'input_sanitizer/errors'
-require 'input_sanitizer/restricted_hash'
-require 'input_sanitizer/default_converters'
-require 'input_sanitizer/sanitizer/clean_field'
-
-class InputSanitizer::Sanitizer
+class InputSanitizer::V1::Sanitizer
   def initialize(data)
     @data = symbolize_keys(data)
     @performed = false
@@ -40,16 +35,16 @@ class InputSanitizer::Sanitizer
 
   def self.converters
     {
-      :integer => InputSanitizer::IntegerConverter.new,
-      :string => InputSanitizer::StringConverter.new,
-      :date => InputSanitizer::DateConverter.new,
-      :time => InputSanitizer::TimeConverter.new,
-      :boolean => InputSanitizer::BooleanConverter.new,
-      :integer_or_blank => InputSanitizer::IntegerConverter.new.extend(InputSanitizer::AllowNil),
-      :string_or_blank => InputSanitizer::StringConverter.new.extend(InputSanitizer::AllowNil),
-      :date_or_blank => InputSanitizer::DateConverter.new.extend(InputSanitizer::AllowNil),
-      :time_or_blank => InputSanitizer::TimeConverter.new.extend(InputSanitizer::AllowNil),
-      :boolean_or_blank => InputSanitizer::BooleanConverter.new.extend(InputSanitizer::AllowNil),
+      :integer => InputSanitizer::V1::IntegerConverter.new,
+      :string => InputSanitizer::V1::StringConverter.new,
+      :date => InputSanitizer::V1::DateConverter.new,
+      :time => InputSanitizer::V1::TimeConverter.new,
+      :boolean => InputSanitizer::V1::BooleanConverter.new,
+      :integer_or_blank => InputSanitizer::V1::IntegerConverter.new.extend(InputSanitizer::V1::AllowNil),
+      :string_or_blank => InputSanitizer::V1::StringConverter.new.extend(InputSanitizer::V1::AllowNil),
+      :date_or_blank => InputSanitizer::V1::DateConverter.new.extend(InputSanitizer::V1::AllowNil),
+      :time_or_blank => InputSanitizer::V1::TimeConverter.new.extend(InputSanitizer::V1::AllowNil),
+      :boolean_or_blank => InputSanitizer::V1::BooleanConverter.new.extend(InputSanitizer::V1::AllowNil),
     }
   end
 
@@ -109,7 +104,7 @@ class InputSanitizer::Sanitizer
   end
 
   def clean_field(field, hash)
-    @cleaned[field] = CleanField.call(hash[:options].merge(
+    @cleaned[field] = InputSanitizer::V1::CleanField.call(hash[:options].merge(
       :has_key => @data.has_key?(field),
       :data => @data[field],
       :converter => hash[:converter],
