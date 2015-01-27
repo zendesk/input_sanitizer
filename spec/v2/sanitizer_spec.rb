@@ -31,6 +31,11 @@ describe InputSanitizer::V2::Sanitizer do
       @params = { :array => {} }
       sanitizer.should_not be_valid
     end
+
+    it "is valid if collection is an array" do
+      @params = { :array => [] }
+      sanitizer.should be_valid
+    end
   end
 
   describe "allow option" do
@@ -66,10 +71,20 @@ describe InputSanitizer::V2::Sanitizer do
       sanitizer.errors[0].field.should eq('/integer_attribute')
     end
 
+    it "is valid when given an integer" do
+      @params = { :integer_attribute => 999 }
+      sanitizer.should be_valid
+    end
+
     it "is invalid when given integer instead of string" do
       @params = { :string_attribute => 0 }
       sanitizer.should_not be_valid
       sanitizer.errors[0].field.should eq('/string_attribute')
+    end
+
+    it "is invalid when given a string" do
+      @params = { :string_attribute => '#@!#%#$@#ad' }
+      sanitizer.should be_valid
     end
 
     it "is invalid when given 'yes' as a bool" do
