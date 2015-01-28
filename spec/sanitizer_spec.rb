@@ -237,41 +237,23 @@ describe InputSanitizer::Sanitizer do
 
     it "includes :integer type" do
       sanitizer.converters.should have_key(:integer)
-      sanitizer.converters[:integer].should be_a(InputSanitizer::IntegerConverter)
+      sanitizer.converters[:integer].should be_a(InputSanitizer::V1::IntegerConverter)
     end
 
     it "includes :string type" do
       sanitizer.converters.should have_key(:string)
-      sanitizer.converters[:string].should be_a(InputSanitizer::StringConverter)
+      sanitizer.converters[:string].should be_a(InputSanitizer::V1::StringConverter)
     end
 
     it "includes :date type" do
       sanitizer.converters.should have_key(:date)
-      sanitizer.converters[:date].should be_a(InputSanitizer::DateConverter)
+      sanitizer.converters[:date].should be_a(InputSanitizer::V1::DateConverter)
     end
 
     it "includes :boolean type" do
       sanitizer.converters.should have_key(:boolean)
-      sanitizer.converters[:boolean].should be_a(InputSanitizer::BooleanConverter)
+      sanitizer.converters[:boolean].should be_a(InputSanitizer::V1::BooleanConverter)
     end
-  end
-
-  describe '.extract_options' do
-
-    it "extracts hash from array if is last" do
-      options = { :a => 1}
-      array = [1,2, options]
-      BasicSanitizer.extract_options(array).should == options
-      array.should == [1,2, options]
-    end
-
-    it "does not extract the last element if not a hash and returns default empty hash" do
-      array = [1,2]
-      BasicSanitizer.extract_options(array).should_not == 2
-      BasicSanitizer.extract_options(array).should == {}
-      array.should == [1,2]
-    end
-
   end
 
   describe '.extract_options!' do
@@ -339,5 +321,10 @@ describe InputSanitizer::Sanitizer do
       error[:type].should == :missing
       error[:field].should == :c1
     end
+  end
+
+  it "is valid when given extra params" do
+    @params = { :extra => 'test' }
+    sanitizer.should be_valid
   end
 end

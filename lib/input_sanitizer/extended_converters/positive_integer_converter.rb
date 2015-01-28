@@ -1,5 +1,5 @@
 module InputSanitizer
-  class PositiveIntegerConverter < IntegerConverter
+  class PositiveIntegerConverter < V1::IntegerConverter
     def call(value)
       super.tap { |value| raise_error if value <= 0 }
     end

@@ -1,6 +1,4 @@
 module InputSanitizer
-  class KeyNotAllowedError < ArgumentError; end
-
   class RestrictedHash < Hash
     def initialize(allowed_keys)
       @allowed_keys = allowed_keys

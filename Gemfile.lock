@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     input_sanitizer (0.2.6)
-      method_struct
+      method_struct (~> 0.2.2)
 
 GEM
   remote: https://rubygems.org/

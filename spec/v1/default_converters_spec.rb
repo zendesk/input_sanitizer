@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe InputSanitizer::IntegerConverter do
-  let(:converter) { InputSanitizer::IntegerConverter.new }
+describe InputSanitizer::V1::IntegerConverter do
+  let(:converter) { InputSanitizer::V1::IntegerConverter.new }
 
   it "casts string to integer" do
     converter.call("42").should == 42
@@ -16,8 +16,8 @@ describe InputSanitizer::IntegerConverter do
   end
 end
 
-describe InputSanitizer::DateConverter do
-  let(:converter) { InputSanitizer::DateConverter.new }
+describe InputSanitizer::V1::DateConverter do
+  let(:converter) { InputSanitizer::V1::DateConverter.new }
 
   it "casts dates in iso format" do
     converter.call("2012-05-15").should == Date.new(2012, 5, 15)
@@ -28,8 +28,8 @@ describe InputSanitizer::DateConverter do
   end
 end
 
-describe InputSanitizer::BooleanConverter do
-  let(:converter) { InputSanitizer::BooleanConverter.new }
+describe InputSanitizer::V1::BooleanConverter do
+  let(:converter) { InputSanitizer::V1::BooleanConverter.new }
 
   it "casts 'true' to true" do
     converter.call('true').should eq(true)
@@ -68,9 +68,8 @@ describe InputSanitizer::BooleanConverter do
   end
 end
 
-
-describe InputSanitizer::TimeConverter do
-  let(:converter) { InputSanitizer::TimeConverter.new }
+describe InputSanitizer::V1::TimeConverter do
+  let(:converter) { InputSanitizer::V1::TimeConverter.new }
 
   it "raises if timezone part given" do
     lambda { converter.call("2012-05-15 13:42:54 +01:00") }.should raise_error(InputSanitizer::ConversionError)
@@ -122,19 +121,19 @@ describe InputSanitizer::TimeConverter do
   end
 end
 
-describe InputSanitizer::AllowNil do
+describe InputSanitizer::V1::AllowNil do
   it "passes blanks" do
-    lambda { |_| 1 }.extend(InputSanitizer::AllowNil).call("").should be_nil
+    lambda { |_| 1 }.extend(InputSanitizer::V1::AllowNil).call("").should be_nil
   end
 
   it "passes things the extended sanitizer passes" do
-    lambda { |_| :something }.extend(InputSanitizer::AllowNil).call(:stuff).
+    lambda { |_| :something }.extend(InputSanitizer::V1::AllowNil).call(:stuff).
       should eq(:something)
   end
 
   it "raises error if the extended sanitizer raises error" do
     action = lambda do
-      lambda { |_| raise "Some error" }.extend(InputSanitizer::AllowNil).call(:stuff)
+      lambda { |_| raise "Some error" }.extend(InputSanitizer::V1::AllowNil).call(:stuff)
     end
 
     action.should raise_error
