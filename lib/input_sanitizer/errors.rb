@@ -23,7 +23,7 @@ module InputSanitizer
 
     def initialize(value, message = nil)
       @value = value
-      @message = message
+      super("given value: #{message}")
     end
   end
 
@@ -34,7 +34,7 @@ module InputSanitizer
 
     def initialize(value, type)
       @value = value
-      @message = type
+      super("expected a value of type: #{type}")
     end
   end
 
