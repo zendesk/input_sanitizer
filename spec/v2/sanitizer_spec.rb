@@ -168,6 +168,9 @@ describe InputSanitizer::V2::Sanitizer do
           sanitizer.errors[2].field.should eq('/tags/0/addresses/1/city')
           sanitizer.errors[3].field.should eq('/tags/1/name')
           sanitizer.errors[4].field.should eq('/tags/1/addresses/0/city')
+
+          ec = sanitizer.error_collection
+          ec.length.should eq(5)
         end
       end
     end

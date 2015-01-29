@@ -12,6 +12,10 @@ class InputSanitizer::V2::Sanitizer < InputSanitizer::Sanitizer
     @cleaned.freeze
   end
 
+  def error_collection
+    @error_collection ||= InputSanitizer::V2::ErrorCollection.new(errors)
+  end
+
   def self.converters
     {
       :integer => InputSanitizer::V2::Types::IntegerCheck.new,
