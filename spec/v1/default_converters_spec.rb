@@ -71,10 +71,6 @@ end
 describe InputSanitizer::V1::TimeConverter do
   let(:converter) { InputSanitizer::V1::TimeConverter.new }
 
-  it "raises if timezone part given" do
-    lambda { converter.call("2012-05-15 13:42:54 +01:00") }.should raise_error(InputSanitizer::ConversionError)
-  end
-
   it "casts date time in iso format" do
     t = Time.utc(2012, 5, 15, 13, 42, 54)
     converter.call("2012-05-15 13:42:54").should == t
@@ -105,10 +101,6 @@ describe InputSanitizer::V1::TimeConverter do
 
   it "raises error if can format is wrong" do
     lambda { converter.call("2/10/2031 13:44:22") }.should raise_error(InputSanitizer::ConversionError)
-  end
-
-  it "raises error if date is wrong" do
-    lambda { converter.call("2012-02-32") }.should raise_error(InputSanitizer::ConversionError)
   end
 
   it "allows the instance of Time" do
