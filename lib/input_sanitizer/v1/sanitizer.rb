@@ -56,7 +56,7 @@ class InputSanitizer::V1::Sanitizer
     converters.keys.each do |name|
       class_eval <<-END
         def self.#{name}(*keys)
-          set_keys_to_converter(keys, converters[:#{name}])
+          set_keys_to_converter(keys, :#{name})
         end
       END
     end
@@ -129,11 +129,22 @@ class InputSanitizer::V1::Sanitizer
     end
   end
 
-  def self.set_keys_to_converter(keys, converter)
+  def self.set_keys_to_converter(keys, converter_or_type)
+    options = extract_options!(keys)
+    converter = if converter_or_type.is_a?(Symbol)
+      if options.fetch(:strict, true)
+        converters[converter_or_type]
+      else
+        non_strict_converters[converter_or_type]
+      end
+    else
+      converter_or_type
+    end
+
     keys.each do |key|
       fields[key] = {
         :converter => converter,
-        :options => extract_options!(keys)
+        :options => options
       }
     end
   end

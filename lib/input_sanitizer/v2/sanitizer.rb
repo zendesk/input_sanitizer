@@ -24,6 +24,13 @@ class InputSanitizer::V2::Sanitizer < InputSanitizer::Sanitizer
       :datetime => InputSanitizer::V2::Types::DatetimeCheck.new,
     }
   end
+
+  def self.non_strict_converters
+    {
+      :integer => InputSanitizer::V2::Types::NonStrictIntegerCheck.new,
+      :boolean => InputSanitizer::V2::Types::NonStrictBooleanCheck.new,
+    }
+  end
   initialize_types_dsl
 
   def self.nested(*keys)

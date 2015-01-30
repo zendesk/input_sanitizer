@@ -9,6 +9,14 @@ module InputSanitizer::V2::Types
     end
   end
 
+  class NonStrictIntegerCheck
+    def call(value)
+      Integer(value)
+    rescue ArgumentError
+      raise InputSanitizer::TypeMismatchError.new(value, :integer)
+    end
+  end
+
   class StringCheck
     def call(value)
       value.to_s.tap do |string|
@@ -21,6 +29,18 @@ module InputSanitizer::V2::Types
     def call(value)
       if [true, false].include?(value)
         value
+      else
+        raise InputSanitizer::TypeMismatchError.new(value, :boolean)
+      end
+    end
+  end
+
+  class NonStrictBooleanCheck
+    def call(value)
+      if [true, 'true'].include?(value)
+        true
+      elsif [false, 'false'].include?(value)
+        false
       else
         raise InputSanitizer::TypeMismatchError.new(value, :boolean)
       end
