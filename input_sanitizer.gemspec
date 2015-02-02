@@ -19,5 +19,5 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency "method_struct", "~>0.2.2"
   gem.add_development_dependency "rspec"
   gem.add_development_dependency "simplecov"
-  gem.add_development_dependency "pry"
+  gem.add_development_dependency "pry", "~> 0.9.12"
 end

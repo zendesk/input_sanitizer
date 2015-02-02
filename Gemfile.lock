@@ -13,9 +13,9 @@ GEM
     method_source (0.8.2)
     method_struct (0.2.2)
     multi_json (1.10.1)
-    pry (0.10.1)
-      coderay (~> 1.1.0)
-      method_source (~> 0.8.1)
+    pry (0.9.12.4)
+      coderay (~> 1.0)
+      method_source (~> 0.8)
       slop (~> 3.4)
     rspec (3.1.0)
       rspec-core (~> 3.1.0)
@@ -41,6 +41,6 @@ PLATFORMS
 
 DEPENDENCIES
   input_sanitizer!
-  pry
+  pry (~> 0.9.12)
   rspec
   simplecov
