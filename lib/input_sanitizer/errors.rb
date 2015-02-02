@@ -27,18 +27,32 @@ module InputSanitizer
 
     def initialize(value)
       @value = value
-      super("#{value} is not included in the list")
+      super("is not included in the list")
     end
   end
 
   class TypeMismatchError < ValidationError
     def code
-      :invalid_type
+      case @type
+      when :integer
+        :not_an_integer
+      else
+        :invalid_type
+      end
     end
 
     def initialize(value, type)
       @value = value
-      super("expected a value of type: #{type}")
+      @type = type
+
+      message = case @type
+      when :integer
+        "must be an integer"
+      else
+        "expected a value of type: #{type}"
+      end
+
+      super(message)
     end
   end
 
@@ -49,6 +63,7 @@ module InputSanitizer
 
     def initialize(name)
       @field = name
+      super("undexpected parameter: #{name}")
     end
   end
 
