@@ -164,8 +164,7 @@ describe InputSanitizer::V2::Sanitizer do
         it "returns JSON pointer for invalid fields" do
           @params = { :address => { :city => 0, :zip => 1 } }
           sanitizer.errors.length.should eq(2)
-          sanitizer.errors[0].field.should eq('/address/city')
-          sanitizer.errors[1].field.should eq('/address/zip')
+          sanitizer.errors.map(&:field).should contain_exactly('/address/city', '/address/zip')
         end
       end
 
@@ -173,9 +172,11 @@ describe InputSanitizer::V2::Sanitizer do
         it "returns JSON pointer for invalid fields" do
           @params = { :tags => [ { :id => 'n', :name => 1 }, { :id => 10, :name => 2 } ] }
           sanitizer.errors.length.should eq(3)
-          sanitizer.errors[0].field.should eq('/tags/0/id')
-          sanitizer.errors[1].field.should eq('/tags/0/name')
-          sanitizer.errors[2].field.should eq('/tags/1/name')
+          sanitizer.errors.map(&:field).should contain_exactly(
+            '/tags/0/id',
+            '/tags/0/name',
+            '/tags/1/name'
+          )
         end
       end
 
@@ -186,11 +187,13 @@ describe InputSanitizer::V2::Sanitizer do
             { :name => 2, :addresses => [ { :city => 3 } ] },
           ] }
           sanitizer.errors.length.should eq(5)
-          sanitizer.errors[0].field.should eq('/tags/0/id')
-          sanitizer.errors[1].field.should eq('/tags/0/addresses/0/city')
-          sanitizer.errors[2].field.should eq('/tags/0/addresses/1/city')
-          sanitizer.errors[3].field.should eq('/tags/1/name')
-          sanitizer.errors[4].field.should eq('/tags/1/addresses/0/city')
+          sanitizer.errors.map(&:field).should contain_exactly(
+            '/tags/0/id',
+            '/tags/0/addresses/0/city',
+            '/tags/0/addresses/1/city',
+            '/tags/1/name',
+            '/tags/1/addresses/0/city'
+          )
 
           ec = sanitizer.error_collection
           ec.length.should eq(5)
