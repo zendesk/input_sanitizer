@@ -29,8 +29,6 @@ InputSanitizer::V1::CleanField = MethodStruct.new(:data, :has_key, :converter, :
   end
 
   def convert_value(value)
-    raise InputSanitizer::ValueNotAllowedError if allow && !allow.include?(value)
-
     if provide
       converter.call(value, provide)
     else
