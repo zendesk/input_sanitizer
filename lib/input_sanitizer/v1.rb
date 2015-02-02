@@ -9,3 +9,4 @@ require_relative 'v1/sanitizer'
 require_relative 'extended_converters'
 
 InputSanitizer::Sanitizer = InputSanitizer::V1::Sanitizer
+InputSanitizer::AllowNil = InputSanitizer::V1::AllowNil
