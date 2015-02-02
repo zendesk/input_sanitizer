@@ -4,9 +4,7 @@ class InputSanitizer::V2::Sanitizer < InputSanitizer::Sanitizer
 
     self.class.fields.each { |field, hash| clean_field(field, hash) }
 
-    @data
-      .reject { |key, _| self.class.fields.keys.include?(key) }
-      .each { |key, _| @errors << InputSanitizer::ExtraneousParamError.new("/#{key}") }
+    @data.reject { |key, _| self.class.fields.keys.include?(key) }.each { |key, _| @errors << InputSanitizer::ExtraneousParamError.new("/#{key}") }
 
     @performed = true
     @cleaned.freeze
@@ -48,12 +46,12 @@ class InputSanitizer::V2::Sanitizer < InputSanitizer::Sanitizer
 
   private
   def clean_field(field, hash)
-    @cleaned[field] = InputSanitizer::V2::CleanField.call(hash[:options].merge(
+    @cleaned[field] = InputSanitizer::V2::CleanField.call(hash[:options].merge({
       :has_key => @data.has_key?(field),
       :data => @data[field],
       :converter => hash[:converter],
       :provide => @data[hash[:options][:provide]],
-    ))
+    }))
   rescue InputSanitizer::OptionalValueOmitted
   rescue InputSanitizer::ValidationError => error
     @errors += handle_error(field, error)
