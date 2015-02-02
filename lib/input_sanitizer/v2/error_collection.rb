@@ -11,7 +11,8 @@ class InputSanitizer::V2::ErrorCollection
     errors.each do |error|
       (@error_codes[error.field] ||= []) << error.code
       (@messages[error.field] ||= []) << error.message
-      (@error_details[error.field] ||= []) << { value: error.value }
+      error_value_hash = { :value => error.value }
+      (@error_details[error.field] ||= []) << error_value_hash
     end
   end
 

@@ -100,12 +100,12 @@ class InputSanitizer::V1::Sanitizer
   end
 
   def clean_field(field, hash)
-    @cleaned[field] = InputSanitizer::V1::CleanField.call(hash[:options].merge(
+    @cleaned[field] = InputSanitizer::V1::CleanField.call(hash[:options].merge({
       :has_key => @data.has_key?(field),
       :data => @data[field],
       :converter => hash[:converter],
       :provide => @data[hash[:options][:provide]],
-    ))
+    }))
   rescue InputSanitizer::ConversionError => error
     add_error(field, :invalid_value, @data[field], error.message)
   rescue InputSanitizer::ValueMissingError => error

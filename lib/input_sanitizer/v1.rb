@@ -1,12 +1,13 @@
 module InputSanitizer::V1
 end
 
-require_relative 'errors'
-require_relative 'restricted_hash'
-require_relative 'v1/default_converters'
-require_relative 'v1/clean_field'
-require_relative 'v1/sanitizer'
-require_relative 'extended_converters'
+dir = File.dirname(__FILE__)
+require File.join(dir, 'errors')
+require File.join(dir, 'restricted_hash')
+require File.join(dir, 'v1', 'default_converters')
+require File.join(dir, 'v1', 'clean_field')
+require File.join(dir, 'v1', 'sanitizer')
+require File.join(dir, 'extended_converters')
 
 InputSanitizer::Sanitizer = InputSanitizer::V1::Sanitizer
 InputSanitizer::AllowNil = InputSanitizer::V1::AllowNil
