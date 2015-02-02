@@ -30,12 +30,18 @@ module InputSanitizer::V1
   end
 
   class TimeConverter
+    ISO_RE = /\A\d{4}-?\d{2}-?\d{2}([T ]?\d{2}(:?\d{2}(:?\d{2}((\.)?\d{0,3}(Z)?)?)?)?)?\Z/
+
     def call(value)
       case value
       when Time
         value.getutc
       when String
-        strip_timezone(Time.parse(value))
+        if value =~ ISO_RE
+          strip_timezone(Time.parse(value))
+        else
+          raise InputSanitizer::ConversionError.new("invalid time")
+        end
       else
         raise InputSanitizer::ConversionError.new("invalid time")
       end
