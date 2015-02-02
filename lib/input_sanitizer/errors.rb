@@ -18,12 +18,12 @@ module InputSanitizer
 
   class ValueNotAllowedError < ValidationError
     def code
-      :invalid_value
+      :inclusion
     end
 
-    def initialize(value, message = nil)
+    def initialize(value)
       @value = value
-      super("given value: #{message}")
+      super("#{value} is not included in the list")
     end
   end
 
