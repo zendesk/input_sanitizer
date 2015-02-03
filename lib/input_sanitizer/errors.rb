@@ -58,12 +58,12 @@ module InputSanitizer
 
   class ExtraneousParamError < ValidationError
     def code
-      :extraneous_param
+      :unknown_param
     end
 
     def initialize(name)
       @field = name
-      super("undexpected parameter: #{name}")
+      super("unexpected parameter: #{name}")
     end
   end
 
