@@ -36,6 +36,8 @@ module InputSanitizer
       case @type
       when :integer
         :not_an_integer
+      when :url
+        :invalid_uri
       else
         :invalid_type
       end
@@ -48,6 +50,9 @@ module InputSanitizer
       message = case @type
       when :integer
         "must be an integer"
+      when :url
+        'must be a valid URI (include the scheme name part, both http and https are accepted, '\
+        'and the hierarchical part)'
       else
         "expected a value of type: #{type}"
       end
