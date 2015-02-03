@@ -20,6 +20,7 @@ class InputSanitizer::V2::Sanitizer < InputSanitizer::Sanitizer
       :string => InputSanitizer::V2::Types::StringCheck.new,
       :boolean => InputSanitizer::V2::Types::BooleanCheck.new,
       :datetime => InputSanitizer::V2::Types::DatetimeCheck.new,
+      :url => InputSanitizer::V2::Types::URLCheck.new,
     }
   end
 

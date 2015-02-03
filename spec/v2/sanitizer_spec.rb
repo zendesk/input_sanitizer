@@ -24,6 +24,8 @@ class TestedSanitizer < InputSanitizer::V2::Sanitizer
 
   integer :loose_integer, :strict => false
   boolean :loose_bool, :strict => false
+
+  url :website
 end
 
 describe InputSanitizer::V2::Sanitizer do
@@ -148,6 +150,21 @@ describe InputSanitizer::V2::Sanitizer do
     it "is valid when given a 'forever' timestamp" do
       @params = { :datetime_attribute => "9999-12-31T00:00:00Z" }
       sanitizer.should be_valid
+    end
+
+    it "is valid when given a correct URL" do
+      @params = { :website => "https://google.com" }
+      sanitizer.should be_valid
+    end
+
+    it "is invalid when given an invalid URL" do
+      @params = { :website => "ht:/google.com" }
+      sanitizer.should_not be_valid
+    end
+
+    it "is invalid when given an invalid URL that contains a valid URL" do
+      @params = { :website => "watwat http://google.com wat" }
+      sanitizer.should_not be_valid
     end
 
     describe "nested checking" do

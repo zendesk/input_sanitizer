@@ -54,4 +54,12 @@ module InputSanitizer::V2::Types
       raise InputSanitizer::TypeMismatchError.new(value, :datetime)
     end
   end
+
+  class URLCheck
+    def call(value)
+      unless /\A#{URI.regexp(%w(http https)).to_s}\z/.match(value)
+        raise InputSanitizer::TypeMismatchError.new(value, :url)
+      end
+    end
+  end
 end
