@@ -72,6 +72,22 @@ module InputSanitizer
     end
   end
 
+  class CollectionLengthError < ValidationError
+    def code
+      :invalid_length
+    end
+
+    def initialize(value, min, max)
+      if min && max
+        super("Expected length between #{min} and #{max}, given: #{value}")
+      elsif min
+        super("Expected length greater than or equal to #{min}, given: #{value}")
+      else
+        super("Expected length less than or equal to #{max}, given: #{value}")
+      end
+    end
+  end
+
   class NestedError < ValidationError
     attr_reader :nested_errors
 

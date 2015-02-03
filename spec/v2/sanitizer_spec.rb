@@ -26,6 +26,7 @@ class TestedSanitizer < InputSanitizer::V2::Sanitizer
   boolean :loose_bool, :strict => false
 
   url :website
+  string :limited_collection, :collection => { :minimum => 1, :maximum => 2 }
 end
 
 describe InputSanitizer::V2::Sanitizer do
@@ -40,6 +41,21 @@ describe InputSanitizer::V2::Sanitizer do
 
     it "is valid if collection is an array" do
       @params = { :array => [] }
+      sanitizer.should be_valid
+    end
+
+    it "is invalid if there are too few elements" do
+      @params = { :limited_collection => [] }
+      sanitizer.should_not be_valid
+    end
+
+    it "is invalid if there are too many elements" do
+      @params = { :limited_collection => ['bear', 'bear', 'bear'] }
+      sanitizer.should_not be_valid
+    end
+
+    it "is valid when there are just enough elements" do
+      @params = { :limited_collection => ['goldilocks'] }
       sanitizer.should be_valid
     end
   end

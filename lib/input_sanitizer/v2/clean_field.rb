@@ -15,6 +15,15 @@ class InputSanitizer::V2::CleanField < MethodStruct.new(:data, :has_key, :conver
   def convert
     if collection
       raise InputSanitizer::TypeMismatchError.new(data, :array) unless data.respond_to?(:to_ary)
+
+      if collection.respond_to?(:fetch)
+        if collection[:minimum] && data.length < collection[:minimum]
+          raise InputSanitizer::CollectionLengthError.new(data.length, collection[:minimum], collection[:maximum])
+        elsif collection[:maximum] && data.length > collection[:maximum]
+          raise InputSanitizer::CollectionLengthError.new(data.length, collection[:minimum], collection[:maximum])
+        end
+      end
+
       convert_collection(data)
     else
       convert_single(data)
