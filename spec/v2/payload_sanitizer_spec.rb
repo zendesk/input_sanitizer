@@ -17,7 +17,7 @@ class TestedPayloadSanitizer < InputSanitizer::V2::PayloadSanitizer
   nested :address, :sanitizer => AddressSanitizer
   nested :tags, :sanitizer => TagSanitizer, :collection => true
 
-  integer :integer_attribute
+  integer :integer_attribute, :minimum => 1, :maximum => 100
   string :string_attribute
   boolean :bool_attribute
   datetime :datetime_attribute
@@ -75,6 +75,23 @@ describe InputSanitizer::V2::PayloadSanitizer do
     end
   end
 
+  describe "minimum and maximum options" do
+    it "is invalid if integer is lower than the minimum" do
+      @params = { :integer_attribute => 0 }
+      sanitizer.should_not be_valid
+    end
+
+    it "is invalid if integer is greater than the maximum" do
+      @params = { :integer_attribute => 101 }
+      sanitizer.should_not be_valid
+    end
+
+    it "is valid when integer is within given range" do
+      @params = { :limited_collection => ['goldilocks'] }
+      sanitizer.should be_valid
+    end
+  end
+
   describe "strict param checking" do
     it "is invalid when given extra params" do
       @params = { :extra => 'test', :extra2 => 1 }
@@ -98,7 +115,7 @@ describe InputSanitizer::V2::PayloadSanitizer do
     end
 
     it "is valid when given an integer" do
-      @params = { :integer_attribute => 999 }
+      @params = { :integer_attribute => 50 }
       sanitizer.should be_valid
     end
 

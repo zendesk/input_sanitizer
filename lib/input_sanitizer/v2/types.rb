@@ -1,8 +1,10 @@
 module InputSanitizer::V2::Types
   class IntegerCheck
-    def call(value)
+    def call(value, options = {})
       Integer(value).tap do |integer|
         raise InputSanitizer::TypeMismatchError.new(value, :integer) unless integer == value
+        raise InputSanitizer::ValueError.new(value, options[:minimum], options[:maximum]) if options[:minimum] && integer < options[:minimum]
+        raise InputSanitizer::ValueError.new(value, options[:minimum], options[:maximum]) if options[:maximum] && integer > options[:maximum]
       end
     rescue ArgumentError
       raise InputSanitizer::TypeMismatchError.new(value, :integer)
@@ -10,8 +12,11 @@ module InputSanitizer::V2::Types
   end
 
   class CoercingIntegerCheck
-    def call(value)
-      Integer(value)
+    def call(value, options = {})
+      Integer(value).tap do |integer|
+        raise InputSanitizer::ValueError.new(value, options[:minimum], options[:maximum]) if options[:minimum] && integer < options[:minimum]
+        raise InputSanitizer::ValueError.new(value, options[:minimum], options[:maximum]) if options[:maximum] && integer > options[:maximum]
+      end
     rescue ArgumentError
       raise InputSanitizer::TypeMismatchError.new(value, :integer)
     end

@@ -1,4 +1,7 @@
-class InputSanitizer::V2::CleanField < MethodStruct.new(:data, :has_key, :converter, :required, :collection, :namespace, :default, :provide, :allow)
+class InputSanitizer::V2::CleanField < MethodStruct.new(
+  :data, :has_key, :converter, :required, :collection, :namespace, :default,
+  :provide, :allow, :minimum, :maximum)
+
   def call
     if has_key
       convert
@@ -59,7 +62,9 @@ class InputSanitizer::V2::CleanField < MethodStruct.new(:data, :has_key, :conver
   def convert_value(value)
     raise InputSanitizer::ValueNotAllowedError.new(value) if allow && !allow.include?(value)
 
-    if provide
+    if minimum || maximum
+      converter.call(value, minimum: minimum, maximum: maximum)
+    elsif provide
       converter.call(value, provide)
     else
       converter.call(value)

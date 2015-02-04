@@ -88,6 +88,22 @@ module InputSanitizer
     end
   end
 
+  class ValueError < ValidationError
+    def code
+      :invalid_value
+    end
+
+    def initialize(value, min, max)
+      if min && max
+        super("Expected a value between #{min} and #{max}, given: #{value}")
+      elsif min
+        super("Expected a value higher than or equal to #{min}, given: #{value}")
+      else
+        super("Expected a value lower than or equal to #{max}, given: #{value}")
+      end
+    end
+  end
+
   class NestedError < ValidationError
     attr_reader :nested_errors
 

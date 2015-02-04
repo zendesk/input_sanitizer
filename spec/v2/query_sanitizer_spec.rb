@@ -3,7 +3,7 @@ require 'spec_helper'
 class TestedQuerySanitizer < InputSanitizer::V2::QuerySanitizer
   string :status, :allow => ['', 'current', 'past']
 
-  integer :integer_attribute
+  integer :integer_attribute, :minimum => 1, :maximum => 100
   string :string_attribute
   boolean :bool_attribute
   datetime :datetime_attribute
@@ -31,6 +31,23 @@ describe InputSanitizer::V2::QuerySanitizer do
       @params = { :bool_attribute => 'false' }
       sanitizer.should be_valid
       sanitizer[:bool_attribute].should eq(false)
+    end
+  end
+
+  describe "minimum and maximum options" do
+    it "is invalid if integer is lower than the minimum" do
+      @params = { :integer_attribute => 0 }
+      sanitizer.should_not be_valid
+    end
+
+    it "is invalid if integer is greater than the maximum" do
+      @params = { :integer_attribute => 101 }
+      sanitizer.should_not be_valid
+    end
+
+    it "is valid when integer is within given range" do
+      @params = { :integer_attribute => 2 }
+      sanitizer.should be_valid
     end
   end
 
@@ -67,7 +84,7 @@ describe InputSanitizer::V2::QuerySanitizer do
 
   describe "strict type checking" do
     it "is valid when given an integer" do
-      @params = { :integer_attribute => 999 }
+      @params = { :integer_attribute => 50 }
       sanitizer.should be_valid
     end
 
