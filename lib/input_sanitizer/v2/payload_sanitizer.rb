@@ -1,4 +1,4 @@
-class InputSanitizer::V2::Sanitizer < InputSanitizer::Sanitizer
+class InputSanitizer::V2::PayloadSanitizer < InputSanitizer::Sanitizer
   def cleaned
     return @cleaned if @performed
 

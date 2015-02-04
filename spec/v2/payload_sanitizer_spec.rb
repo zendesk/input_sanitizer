@@ -1,17 +1,17 @@
 require 'spec_helper'
 
-class AddressSanitizer < InputSanitizer::V2::Sanitizer
+class AddressSanitizer < InputSanitizer::V2::PayloadSanitizer
   string :city
   string :zip
 end
 
-class TagSanitizer < InputSanitizer::V2::Sanitizer
+class TagSanitizer < InputSanitizer::V2::PayloadSanitizer
   integer :id
   string :name
   nested :addresses, :sanitizer => AddressSanitizer, :collection => true
 end
 
-class TestedSanitizer < InputSanitizer::V2::Sanitizer
+class TestedPayloadSanitizer < InputSanitizer::V2::PayloadSanitizer
   integer :array, :collection => true
   string :status, :allow => ['', 'current', 'past']
   nested :address, :sanitizer => AddressSanitizer
@@ -22,15 +22,12 @@ class TestedSanitizer < InputSanitizer::V2::Sanitizer
   boolean :bool_attribute
   datetime :datetime_attribute
 
-  integer :loose_integer, :strict => false
-  boolean :loose_bool, :strict => false
-
   url :website
   string :limited_collection, :collection => { :minimum => 1, :maximum => 2 }
 end
 
-describe InputSanitizer::V2::Sanitizer do
-  let(:sanitizer) { TestedSanitizer.new(@params) }
+describe InputSanitizer::V2::PayloadSanitizer do
+  let(:sanitizer) { TestedPayloadSanitizer.new(@params) }
   let(:cleaned) { sanitizer.cleaned }
 
   describe "collections" do
@@ -57,26 +54,6 @@ describe InputSanitizer::V2::Sanitizer do
     it "is valid when there are just enough elements" do
       @params = { :limited_collection => ['goldilocks'] }
       sanitizer.should be_valid
-    end
-  end
-
-  describe 'type strictness' do
-    it 'is valid if given an integer as a string' do
-      @params = { :loose_integer => '22' }
-      sanitizer.should be_valid
-      sanitizer[:loose_integer].should eq(22)
-    end
-
-    it 'is valid if given a "true" boolean as a string' do
-      @params = { :loose_bool => 'true' }
-      sanitizer.should be_valid
-      sanitizer[:loose_bool].should eq(true)
-    end
-
-    it 'is valid if given a "false" boolean as a string' do
-      @params = { :loose_bool => 'false' }
-      sanitizer.should be_valid
-      sanitizer[:loose_bool].should eq(false)
     end
   end
 
