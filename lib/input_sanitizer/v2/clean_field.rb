@@ -63,7 +63,7 @@ class InputSanitizer::V2::CleanField < MethodStruct.new(
     raise InputSanitizer::ValueNotAllowedError.new(value) if allow && !allow.include?(value)
 
     if minimum || maximum
-      converter.call(value, minimum: minimum, maximum: maximum)
+      converter.call(value, :minimum => minimum, :maximum => maximum)
     elsif provide
       converter.call(value, provide)
     else
