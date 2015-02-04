@@ -102,8 +102,7 @@ describe InputSanitizer::V2::PayloadSanitizer do
     it "is invalid when given extra params in a nested sanitizer" do
       @params = { :address => { :extra => 0 }, :tags => [ { :extra2 => 1 } ] }
       sanitizer.should_not be_valid
-      sanitizer.errors[0].field.should eq('/address/extra')
-      sanitizer.errors[1].field.should eq('/tags/0/extra2')
+      sanitizer.errors.map(&:field).should contain_exactly('/address/extra', '/tags/0/extra2')
     end
   end
 
@@ -182,8 +181,7 @@ describe InputSanitizer::V2::PayloadSanitizer do
         it "returns JSON pointer for invalid fields" do
           @params = { :array => [1, 'z', '3', 4] }
           sanitizer.errors.length.should eq(2)
-          sanitizer.errors[0].field.should eq('/array/1')
-          sanitizer.errors[1].field.should eq('/array/2')
+          sanitizer.errors.map(&:field).should contain_exactly('/array/1', '/array/2')
         end
       end
 
