@@ -132,11 +132,7 @@ class InputSanitizer::V1::Sanitizer
   def self.set_keys_to_converter(keys, converter_or_type)
     options = extract_options!(keys)
     converter = if converter_or_type.is_a?(Symbol)
-      if options.fetch(:strict, true)
-        converters[converter_or_type]
-      else
-        non_strict_converters[converter_or_type]
-      end
+      converters[converter_or_type]
     else
       converter_or_type
     end

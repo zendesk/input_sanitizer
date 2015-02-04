@@ -23,13 +23,6 @@ class InputSanitizer::V2::PayloadSanitizer < InputSanitizer::Sanitizer
       :url => InputSanitizer::V2::Types::URLCheck.new,
     }
   end
-
-  def self.non_strict_converters
-    {
-      :integer => InputSanitizer::V2::Types::NonStrictIntegerCheck.new,
-      :boolean => InputSanitizer::V2::Types::NonStrictBooleanCheck.new,
-    }
-  end
   initialize_types_dsl
 
   def self.nested(*keys)
