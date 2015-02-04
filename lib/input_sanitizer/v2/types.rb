@@ -9,7 +9,7 @@ module InputSanitizer::V2::Types
     end
   end
 
-  class NonStrictIntegerCheck
+  class CoercingIntegerCheck
     def call(value)
       Integer(value)
     rescue ArgumentError
@@ -35,7 +35,7 @@ module InputSanitizer::V2::Types
     end
   end
 
-  class NonStrictBooleanCheck
+  class CoercingBooleanCheck
     def call(value)
       if [true, 'true'].include?(value)
         true
