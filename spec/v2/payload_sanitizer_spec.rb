@@ -108,7 +108,7 @@ describe InputSanitizer::V2::PayloadSanitizer do
       sanitizer.errors[0].field.should eq('/string_attribute')
     end
 
-    it "is invalid when given a string" do
+    it "is valid when given a string" do
       @params = { :string_attribute => '#@!#%#$@#ad' }
       sanitizer.should be_valid
     end
