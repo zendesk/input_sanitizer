@@ -3,7 +3,7 @@ require 'spec_helper'
 class TestedQuerySanitizer < InputSanitizer::V2::QuerySanitizer
   string :status, :allow => ['', 'current', 'past']
 
-  integer :integer_attribute, :minimum => 1, :maximum => 100
+  integer :integer_attribute, :minimum => 1, :maximum => 100, :default => 2
   string :string_attribute
   boolean :bool_attribute
   datetime :datetime_attribute
@@ -13,6 +13,14 @@ end
 describe InputSanitizer::V2::QuerySanitizer do
   let(:sanitizer) { TestedQuerySanitizer.new(@params) }
   let(:cleaned) { sanitizer.cleaned }
+
+  describe 'default value' do
+    it 'uses a default value if not provided in params' do
+      @params = {}
+      sanitizer.should be_valid
+      sanitizer[:integer_attribute].should eq(2)
+    end
+  end
 
   describe 'type strictness' do
     it 'is valid if given an integer as a string' do
