@@ -1,2 +1,2 @@
 0.3.4
- * let's start loggin changes here
+ * Field names in QuerySanitizer errors no longer have a leading '/'
