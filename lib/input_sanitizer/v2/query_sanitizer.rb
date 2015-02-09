@@ -12,4 +12,12 @@ class InputSanitizer::V2::QuerySanitizer < InputSanitizer::V2::PayloadSanitizer
 
   # allow underscore cache buster by default
   string :_
+
+  private
+  def perform_clean
+    super
+    @errors.each do |error|
+      error.field = error.field[1..-1] if error.field.start_with?('/')
+    end
+  end
 end

@@ -73,7 +73,7 @@ describe InputSanitizer::V2::QuerySanitizer do
     it "is invalid when given a disallowed string" do
       @params = { :status => 'current bad string' }
       sanitizer.should_not be_valid
-      sanitizer.errors[0].field.should eq('/status')
+      sanitizer.errors[0].field.should eq('status')
     end
   end
 
@@ -104,7 +104,7 @@ describe InputSanitizer::V2::QuerySanitizer do
     it "is invalid when given 'yes' as a bool" do
       @params = { :bool_attribute => 'yes' }
       sanitizer.should_not be_valid
-      sanitizer.errors[0].field.should eq('/bool_attribute')
+      sanitizer.errors[0].field.should eq('bool_attribute')
     end
 
     it "is valid when given true as a bool" do
@@ -120,7 +120,7 @@ describe InputSanitizer::V2::QuerySanitizer do
     it "is invalid when given an incorrect datetime" do
       @params = { :datetime_attribute => "2014-08-2716:32:56Z" }
       sanitizer.should_not be_valid
-      sanitizer.errors[0].field.should eq('/datetime_attribute')
+      sanitizer.errors[0].field.should eq('datetime_attribute')
     end
 
     it "is valid when given a correct datetime" do
