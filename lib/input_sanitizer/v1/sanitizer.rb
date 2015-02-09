@@ -17,7 +17,7 @@ class InputSanitizer::V1::Sanitizer
   def cleaned
     return @cleaned if @performed
 
-    self.class.fields.each { |field, hash| clean_field(field, hash) }
+    perform_clean
 
     @performed = true
     @cleaned.freeze
@@ -97,6 +97,10 @@ class InputSanitizer::V1::Sanitizer
   private
   def self.extract_options!(array)
     array.last.is_a?(Hash) ? array.pop : {}
+  end
+
+  def perform_clean
+    self.class.fields.each { |field, hash| clean_field(field, hash) }
   end
 
   def clean_field(field, hash)

@@ -1,15 +1,4 @@
 class InputSanitizer::V2::PayloadSanitizer < InputSanitizer::Sanitizer
-  def cleaned
-    return @cleaned if @performed
-
-    self.class.fields.each { |field, hash| clean_field(field, hash) }
-
-    @data.reject { |key, _| self.class.fields.keys.include?(key) }.each { |key, _| @errors << InputSanitizer::ExtraneousParamError.new("/#{key}") }
-
-    @performed = true
-    @cleaned.freeze
-  end
-
   def error_collection
     @error_collection ||= InputSanitizer::V2::ErrorCollection.new(errors)
   end
@@ -39,6 +28,11 @@ class InputSanitizer::V2::PayloadSanitizer < InputSanitizer::Sanitizer
   end
 
   private
+  def perform_clean
+    super
+    @data.reject { |key, _| self.class.fields.keys.include?(key) }.each { |key, _| @errors << InputSanitizer::ExtraneousParamError.new("/#{key}") }
+  end
+
   def clean_field(field, hash)
     @cleaned[field] = InputSanitizer::V2::CleanField.call(hash[:options].merge({
       :has_key => @data.has_key?(field),
