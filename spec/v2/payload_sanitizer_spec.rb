@@ -118,6 +118,12 @@ describe InputSanitizer::V2::PayloadSanitizer do
       sanitizer.should be_valid
     end
 
+    it "is invalid when given nil instead of integer" do
+      @params = { :integer_attribute => nil }
+      sanitizer.should_not be_valid
+      sanitizer.errors[0].field.should eq('/integer_attribute')
+    end
+
     it "is invalid when given integer instead of string" do
       @params = { :string_attribute => 0 }
       sanitizer.should_not be_valid

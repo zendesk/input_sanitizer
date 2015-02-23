@@ -6,7 +6,7 @@ module InputSanitizer::V2::Types
         raise InputSanitizer::ValueError.new(value, options[:minimum], options[:maximum]) if options[:minimum] && integer < options[:minimum]
         raise InputSanitizer::ValueError.new(value, options[:minimum], options[:maximum]) if options[:maximum] && integer > options[:maximum]
       end
-    rescue ArgumentError
+    rescue ArgumentError, TypeError
       raise InputSanitizer::TypeMismatchError.new(value, :integer)
     end
   end
