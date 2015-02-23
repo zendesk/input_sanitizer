@@ -1,2 +1,4 @@
+0.3.5
+ * Sending nil to integer type field no longer crashes with TypeError
 0.3.4
  * Field names in QuerySanitizer errors no longer have a leading '/'
