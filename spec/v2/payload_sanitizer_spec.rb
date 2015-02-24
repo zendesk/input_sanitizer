@@ -116,6 +116,7 @@ describe InputSanitizer::V2::PayloadSanitizer do
     it "is valid when given an integer" do
       @params = { :integer_attribute => 50 }
       sanitizer.should be_valid
+      sanitizer[:integer_attribute].should eq(50)
     end
 
     it "is invalid when given nil instead of integer" do
@@ -133,6 +134,7 @@ describe InputSanitizer::V2::PayloadSanitizer do
     it "is valid when given a string" do
       @params = { :string_attribute => '#@!#%#$@#ad' }
       sanitizer.should be_valid
+      sanitizer[:string_attribute].should eq('#@!#%#$@#ad')
     end
 
     it "is invalid when given 'yes' as a bool" do
@@ -170,6 +172,7 @@ describe InputSanitizer::V2::PayloadSanitizer do
     it "is valid when given a correct URL" do
       @params = { :website => "https://google.com" }
       sanitizer.should be_valid
+      sanitizer[:website].should eq("https://google.com")
     end
 
     it "is invalid when given an invalid URL" do
