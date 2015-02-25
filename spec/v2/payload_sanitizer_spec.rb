@@ -13,7 +13,8 @@ end
 
 class TestedPayloadSanitizer < InputSanitizer::V2::PayloadSanitizer
   integer :array, :collection => true
-  string :status, :allow => ['', 'current', 'past']
+  string :status, :allow => ['current', 'past']
+  string :status_with_empty, :allow => ['', 'current', 'past']
   nested :address, :sanitizer => AddressSanitizer
   nested :tags, :sanitizer => TagSanitizer, :collection => true
 
@@ -63,8 +64,14 @@ describe InputSanitizer::V2::PayloadSanitizer do
       sanitizer.should be_valid
     end
 
-    it "is valid when given an allowed empty string" do
+    it "is invalid when given an empty string" do
       @params = { :status => '' }
+      sanitizer.should_not be_valid
+      sanitizer.errors[0].field.should eq('/status')
+    end
+
+    it "is valid when given an allowed empty string" do
+      @params = { :status_with_empty => '' }
       sanitizer.should be_valid
     end
 
