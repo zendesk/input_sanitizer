@@ -27,6 +27,12 @@ class TestedPayloadSanitizer < InputSanitizer::V2::PayloadSanitizer
   string :limited_collection, :collection => { :minimum => 1, :maximum => 2 }
 end
 
+class BlankValuesPayloadSanitizer < InputSanitizer::V2::PayloadSanitizer
+  string :string, :required => true
+  datetime :datetime, :allow_nil => false
+  url :url, :allow_blank => false
+end
+
 describe InputSanitizer::V2::PayloadSanitizer do
   let(:sanitizer) { TestedPayloadSanitizer.new(@params) }
   let(:cleaned) { sanitizer.cleaned }
@@ -126,10 +132,10 @@ describe InputSanitizer::V2::PayloadSanitizer do
       sanitizer[:integer_attribute].should eq(50)
     end
 
-    it "is invalid when given nil instead of integer" do
+    it "is valid when given nil for an integer" do
       @params = { :integer_attribute => nil }
-      sanitizer.should_not be_valid
-      sanitizer.errors[0].field.should eq('/integer_attribute')
+      sanitizer.should be_valid
+      sanitizer[:integer_attribute].should be_nil
     end
 
     it "is invalid when given integer instead of string" do
@@ -190,6 +196,40 @@ describe InputSanitizer::V2::PayloadSanitizer do
     it "is invalid when given an invalid URL that contains a valid URL" do
       @params = { :website => "watwat http://google.com wat" }
       sanitizer.should_not be_valid
+    end
+
+    describe "blank and required values" do
+      let(:sanitizer) { BlankValuesPayloadSanitizer.new(@params) }
+      let(:defaults) { { :string => 'zz' } }
+
+      it "is invalid if required string is blank" do
+        @params = { :string => ' ' }
+        sanitizer.should_not be_valid
+        sanitizer.errors[0].should be_an_instance_of(InputSanitizer::ValueMissingError)
+      end
+
+      it "is invalid if non-nil datetime is null" do
+        @params = defaults.merge({ :datetime => nil })
+        sanitizer.should_not be_valid
+        sanitizer.errors[0].should be_an_instance_of(InputSanitizer::ValueMissingError)
+      end
+
+      it "is valid if non-nil datetime is blank" do
+        @params = defaults.merge({ :datetime => '' })
+        sanitizer.should be_valid
+      end
+
+      it "is invalid if non-blank url is nil" do
+        @params = defaults.merge({ :url => nil })
+        sanitizer.should_not be_valid
+        sanitizer.errors[0].should be_an_instance_of(InputSanitizer::ValueMissingError)
+      end
+
+      it "is invalid if non-blank url is blank" do
+        @params = defaults.merge({ :url => '' })
+        sanitizer.should_not be_valid
+        sanitizer.errors[0].should be_an_instance_of(InputSanitizer::ValueMissingError)
+      end
     end
 
     describe "nested checking" do
