@@ -1,7 +1,9 @@
 require 'bundler'
 Bundler.setup(:test)
 
-unless ENV['CI']
+skip_coverage = ENV['CI'] || RUBY_VERSION =~ /^1\.8/
+
+unless skip_coverage
   require 'simplecov'
   SimpleCov.start
 end

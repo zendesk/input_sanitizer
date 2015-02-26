@@ -16,9 +16,16 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = InputSanitizer::VERSION
 
-  gem.add_runtime_dependency "method_struct", "~>0.2.2"
-  gem.add_runtime_dependency "activesupport"
-  gem.add_development_dependency "rspec"
-  gem.add_development_dependency "simplecov"
-  gem.add_development_dependency "pry", "~> 0.9.12"
+  gem.add_runtime_dependency "method_struct", ">= 0.2.2"
+
+  if RUBY_VERSION =~ /^1\.8/
+    gem.add_runtime_dependency "activesupport", "~> 3.0.0"
+    gem.add_development_dependency "pry", "~> 0.9.0"
+  else
+    gem.add_runtime_dependency "activesupport", ">= 3.0.0"
+    gem.add_development_dependency "pry", "~> 0.10.1"
+    gem.add_development_dependency "simplecov", "~> 0.9.2"
+  end
+
+  gem.add_development_dependency "rspec", "~> 3.2.0"
 end
