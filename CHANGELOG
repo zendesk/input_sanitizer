@@ -1,3 +1,6 @@
+0.3.9
+ * Added sort_by helper to QuerySanitizer
+
 0.3.8
  * Added support for comma separated values in QuerySanitizer
 
