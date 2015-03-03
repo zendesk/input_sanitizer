@@ -1,9 +1,9 @@
-class InputSanitizer::V2::CleanField < MethodStruct.new(:data, :has_key, :default, :collection, :type, :options)
+class InputSanitizer::V2::CleanField < MethodStruct.new(:data, :has_key, :default, :collection, :type, :converter, :options)
   def call
     if has_key
       convert
     elsif default
-      options[:converter].call(default)
+      converter.call(default)
     elsif options[:required]
       raise InputSanitizer::ValueMissingError
     else
@@ -17,10 +17,11 @@ class InputSanitizer::V2::CleanField < MethodStruct.new(:data, :has_key, :defaul
       collection_clean.call(
         :data => data,
         :collection => collection,
+        :converter => converter,
         :options => options
       )
     else
-      InputSanitizer::V2::CleanSingleValue.call(options.merge(:data => data))
+      converter.call(data, options)
     end
   end
 

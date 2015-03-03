@@ -19,7 +19,7 @@ class InputSanitizer::V2::PayloadSanitizer < InputSanitizer::Sanitizer
     sanitizer = options.delete(:sanitizer)
     keys.push(options)
     raise "You did not define a sanitizer for nested value" if sanitizer == nil
-    converter = lambda { |value|
+    converter = lambda { |value, _|
       instance = sanitizer.new(value)
       raise InputSanitizer::NestedError.new(instance.errors) unless instance.valid?
       instance.cleaned
@@ -44,10 +44,8 @@ class InputSanitizer::V2::PayloadSanitizer < InputSanitizer::Sanitizer
       :default => default,
       :collection => collection,
       :type => sanitizer_type,
-      :options => options.merge({
-        :provide => @data[options[:provide]],
-        :converter => hash[:converter],
-      })
+      :converter => hash[:converter],
+      :options => options
     )
   rescue InputSanitizer::OptionalValueOmitted
   rescue InputSanitizer::ValidationError => error

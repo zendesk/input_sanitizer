@@ -1,4 +1,4 @@
-class InputSanitizer::V2::CleanQueryCollectionField < MethodStruct.new(:data, :collection, :options)
+class InputSanitizer::V2::CleanQueryCollectionField < MethodStruct.new(:data, :converter, :collection, :options)
   def call
     validate_type
     validate_size
@@ -6,7 +6,7 @@ class InputSanitizer::V2::CleanQueryCollectionField < MethodStruct.new(:data, :c
     result, errors = [], {}
     items.each_with_index do |value, idx|
       begin
-        result << InputSanitizer::V2::CleanSingleValue.call(options.merge(:data => value))
+        result << converter.call(value, options)
       rescue InputSanitizer::ValidationError => e
         errors[idx] = e
       end
