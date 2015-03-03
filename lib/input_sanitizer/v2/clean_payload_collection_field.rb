@@ -1,4 +1,4 @@
-class InputSanitizer::V2::CleanCollectionField < MethodStruct.new(:data, :collection, :options)
+class InputSanitizer::V2::CleanPayloadCollectionField < MethodStruct.new(:data, :collection, :options)
   def call
     validate_type
     validate_size

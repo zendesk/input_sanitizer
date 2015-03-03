@@ -14,7 +14,7 @@ class InputSanitizer::V2::CleanField < MethodStruct.new(:data, :has_key, :defaul
   private
   def convert
     if collection
-      InputSanitizer::V2::CleanCollectionField.call(
+      InputSanitizer::V2::CleanPayloadCollectionField.call(
         :data => data,
         :collection => collection,
         :options => options
