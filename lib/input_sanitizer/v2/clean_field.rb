@@ -1,4 +1,4 @@
-class InputSanitizer::V2::CleanField < MethodStruct.new(:data, :has_key, :default, :collection, :options)
+class InputSanitizer::V2::CleanField < MethodStruct.new(:data, :has_key, :default, :collection, :type, :options)
   def call
     if has_key
       convert
@@ -14,13 +14,22 @@ class InputSanitizer::V2::CleanField < MethodStruct.new(:data, :has_key, :defaul
   private
   def convert
     if collection
-      InputSanitizer::V2::CleanPayloadCollectionField.call(
+      collection_clean.call(
         :data => data,
         :collection => collection,
         :options => options
       )
     else
       InputSanitizer::V2::CleanSingleValue.call(options.merge(:data => data))
+    end
+  end
+
+  def collection_clean
+    case type
+    when :payload
+      InputSanitizer::V2::CleanPayloadCollectionField
+    when :query
+      InputSanitizer::V2::CleanQueryCollectionField
     end
   end
 end

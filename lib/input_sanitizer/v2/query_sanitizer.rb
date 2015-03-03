@@ -20,4 +20,8 @@ class InputSanitizer::V2::QuerySanitizer < InputSanitizer::V2::PayloadSanitizer
       error.field = error.field[1..-1] if error.field.start_with?('/')
     end
   end
+
+  def sanitizer_type
+    :query
+  end
 end

@@ -8,6 +8,9 @@ class TestedQuerySanitizer < InputSanitizer::V2::QuerySanitizer
   boolean :bool_attribute
   datetime :datetime_attribute
   url :website
+
+  integer :ids, :collection => true
+  string :tags, :collection => true
 end
 
 describe InputSanitizer::V2::QuerySanitizer do
@@ -145,6 +148,20 @@ describe InputSanitizer::V2::QuerySanitizer do
     it "is invalid when given an invalid URL that contains a valid URL" do
       @params = { :website => "watwat http://google.com wat" }
       sanitizer.should_not be_valid
+    end
+  end
+
+  describe "collections" do
+    it "supports comma separated integers" do
+      @params = { :ids => "1,2,3" }
+      sanitizer.should be_valid
+      sanitizer[:ids].should eq([1, 2, 3])
+    end
+
+    it "supports comma separated strings" do
+      @params = { :tags => "one,two,three" }
+      sanitizer.should be_valid
+      sanitizer[:tags].should eq(["one", "two", "three"])
     end
   end
 end

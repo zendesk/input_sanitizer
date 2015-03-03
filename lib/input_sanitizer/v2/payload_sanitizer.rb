@@ -43,6 +43,7 @@ class InputSanitizer::V2::PayloadSanitizer < InputSanitizer::Sanitizer
       :has_key => @data.has_key?(field),
       :default => default,
       :collection => collection,
+      :type => sanitizer_type,
       :options => options.merge({
         :provide => @data[options[:provide]],
         :converter => hash[:converter],
@@ -67,5 +68,9 @@ class InputSanitizer::V2::PayloadSanitizer < InputSanitizer::Sanitizer
       error.field = "/#{field}"
       Array(error)
     end.flatten
+  end
+
+  def sanitizer_type
+    :payload
   end
 end
