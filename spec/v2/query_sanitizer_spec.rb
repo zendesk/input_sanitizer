@@ -12,7 +12,6 @@ end
 
 describe InputSanitizer::V2::QuerySanitizer do
   let(:sanitizer) { TestedQuerySanitizer.new(@params) }
-  let(:cleaned) { sanitizer.cleaned }
 
   describe 'default value' do
     it 'uses a default value if not provided in params' do

@@ -34,12 +34,20 @@ class InputSanitizer::V2::PayloadSanitizer < InputSanitizer::Sanitizer
   end
 
   def clean_field(field, hash)
-    @cleaned[field] = InputSanitizer::V2::CleanField.call(hash[:options].merge({
-      :has_key => @data.has_key?(field),
+    options = hash[:options].clone
+    collection = options.delete(:collection)
+    default = options.delete(:default)
+
+    @cleaned[field] = InputSanitizer::V2::CleanField.call(
       :data => @data[field],
-      :converter => hash[:converter],
-      :provide => @data[hash[:options][:provide]],
-    }))
+      :has_key => @data.has_key?(field),
+      :default => default,
+      :collection => collection,
+      :options => options.merge({
+        :provide => @data[options[:provide]],
+        :converter => hash[:converter],
+      })
+    )
   rescue InputSanitizer::OptionalValueOmitted
   rescue InputSanitizer::ValidationError => error
     @errors += handle_error(field, error)
