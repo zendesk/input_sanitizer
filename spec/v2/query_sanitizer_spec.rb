@@ -11,6 +11,7 @@ class TestedQuerySanitizer < InputSanitizer::V2::QuerySanitizer
 
   integer :ids, :collection => true
   string :tags, :collection => true
+  sort_by %w(name updated_at created_at)
 end
 
 describe InputSanitizer::V2::QuerySanitizer do
@@ -162,6 +163,20 @@ describe InputSanitizer::V2::QuerySanitizer do
       @params = { :tags => "one,two,three" }
       sanitizer.should be_valid
       sanitizer[:tags].should eq(["one", "two", "three"])
+    end
+  end
+
+  describe "sort_by" do
+    it "accepts correct sorting format" do
+      @params = { :sort_by => "updated_at:desc" }
+      sanitizer.should be_valid
+      sanitizer[:sort_by].should eq(["updated_at", "desc"])
+    end
+
+    it "assumes ascending order by default" do
+      @params = { :sort_by => "name" }
+      sanitizer.should be_valid
+      sanitizer[:sort_by].should eq(["name", "asc"])
     end
   end
 end

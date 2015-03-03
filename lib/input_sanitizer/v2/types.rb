@@ -105,4 +105,22 @@ module InputSanitizer::V2::Types
       end
     end
   end
+
+  class SortByCheck
+    def call(value, options = {})
+      key, direction = value.to_s.split(':', 2)
+      direction = 'asc' if direction.blank?
+
+      unless options[:allow].include?(key) && allowed_directions.include?(direction)
+        raise InputSanitizer::ValueNotAllowedError.new(value)
+      end
+
+      [key, direction]
+    end
+
+    private
+    def allowed_directions
+      ['asc', 'desc']
+    end
+  end
 end

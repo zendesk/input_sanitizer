@@ -10,6 +10,10 @@ class InputSanitizer::V2::QuerySanitizer < InputSanitizer::V2::PayloadSanitizer
   end
   initialize_types_dsl
 
+  def self.sort_by(allowed_values)
+    set_keys_to_converter([:sort_by, { :allow => allowed_values }], InputSanitizer::V2::Types::SortByCheck.new)
+  end
+
   # allow underscore cache buster by default
   string :_
 
