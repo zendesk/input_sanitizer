@@ -1,6 +1,7 @@
 class InputSanitizer::V2::PayloadTransform < MethodStruct.new(:original_payload)
   def call
-    transform and return payload
+    transform
+    payload
   end
 
   def initialize(*args)

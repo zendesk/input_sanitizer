@@ -14,6 +14,8 @@ class TestTransform < InputSanitizer::V2::PayloadTransform
     if has?(:thing)
       payload[:other_thing] = "123-#{payload.delete(:thing)}"
     end
+
+    nil
   end
 end
 
