@@ -1,3 +1,6 @@
+0.3.8
+ * Added support for comma separated values in QuerySanitizer
+
 0.3.7
  * Added allow_nil/allow_blank options for PayloadSanitizer
 
