@@ -11,7 +11,10 @@ class InputSanitizer::V2::PayloadTransform < MethodStruct.new(:original_payload)
 
   private
   def rename(from, to)
-    payload[to] = payload.delete(from)
+    if has?(from)
+      data = payload.delete(from)
+      payload[to] = data
+    end
   end
 
   def merge_in(field, options = {})

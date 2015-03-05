@@ -51,6 +51,22 @@ describe InputSanitizer::V2::PayloadTransform do
     subject[:address].should be_nil
   end
 
+  context "when attribute is not present" do
+    let(:payload) { {} }
+
+    it "the renamed attribute is not present either" do
+      subject.should eq({})
+    end
+  end
+
+  context "when attribute is nil" do
+    let(:payload) { { :value => nil } }
+
+    it "renames it correctly" do
+      subject.should eq({ :scope => nil })
+    end
+  end
+
   context "when there is no data for a nested transform" do
     let(:payload) { { :name => 'wat' } }
 
