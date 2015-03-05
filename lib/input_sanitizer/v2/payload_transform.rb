@@ -15,10 +15,10 @@ class InputSanitizer::V2::PayloadTransform < MethodStruct.new(:original_payload)
   end
 
   def merge_in(field, options = {})
-    source = payload.delete(field)
-    source = options[:using].call(source) if options[:using]
-
-    payload.merge!(source)
+    if source = payload.delete(field)
+      source = options[:using].call(source) if options[:using]
+      payload.merge!(source)
+    end
   end
 
   def has?(key)

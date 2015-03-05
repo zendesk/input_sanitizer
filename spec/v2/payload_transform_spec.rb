@@ -51,6 +51,14 @@ describe InputSanitizer::V2::PayloadTransform do
     subject[:address].should be_nil
   end
 
+  context "when there is no data for a nested transform" do
+    let(:payload) { { :name => 'wat' } }
+
+    it "still successfully transforms data" do
+      subject.should eq({ :name => 'wat' })
+    end
+  end
+
   describe "invalid use of the transform class" do
     subject { InvalidTransform.call(payload) }
 
