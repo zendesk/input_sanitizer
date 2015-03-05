@@ -1,3 +1,6 @@
+0.3.12
+ * PayloadTransform fixes (nested transforms, renaming nil values)
+
 0.3.11
  * Fixed a bug in PayloadTransform
 
