@@ -82,4 +82,16 @@ describe InputSanitizer::V2::PayloadTransform do
       lambda { subject }.should raise_error
     end
   end
+
+  context "when given a frozen InputSanitizer::RestrictedHash" do
+    let(:payload) do
+      InputSanitizer::RestrictedHash.new([:value]).tap do |hash|
+        hash[:value] = 1
+      end.freeze
+    end
+
+    it "works" do
+      subject.should eq({ :scope => 1 })
+    end
+  end
 end

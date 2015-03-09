@@ -29,6 +29,6 @@ class InputSanitizer::V2::PayloadTransform < MethodStruct.new(:original_payload)
   end
 
   def payload
-    @payload ||= original_payload.clone
+    @payload ||= original_payload.dup
   end
 end
