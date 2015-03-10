@@ -78,7 +78,7 @@ module InputSanitizer
 
     def initialize(name)
       @field = name
-      super("unexpected parameter: #{name}")
+      super("is an unexpected parameter")
     end
   end
 
@@ -89,11 +89,11 @@ module InputSanitizer
 
     def initialize(value, min, max)
       if min && max
-        super("Expected length between #{min} and #{max}, given: #{value}")
+        super("must be of length between #{min} and #{max}, given: #{value}")
       elsif min
-        super("Expected length greater than or equal to #{min}, given: #{value}")
+        super("must be of length greater than or equal to #{min}, given: #{value}")
       else
-        super("Expected length less than or equal to #{max}, given: #{value}")
+        super("must be of length less than or equal to #{max}, given: #{value}")
       end
     end
   end
@@ -105,11 +105,11 @@ module InputSanitizer
 
     def initialize(value, min, max)
       if min && max
-        super("Expected a value between #{min} and #{max}, given: #{value}")
+        super("must be between #{min} and #{max}, given: #{value}")
       elsif min
-        super("Expected a value higher than or equal to #{min}, given: #{value}")
+        super("must be higher than or equal to #{min}, given: #{value}")
       else
-        super("Expected a value lower than or equal to #{max}, given: #{value}")
+        super("must be lower than or equal to #{max}, given: #{value}")
       end
     end
   end
