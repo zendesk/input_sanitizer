@@ -94,7 +94,7 @@ describe 'type checks' do
           when true
             lambda { test_case[0].new.call(test_case[2], test_case[1]) }.should_not raise_error
           when false
-            lambda { test_case[0].new.call(test_case[2], test_case[1]) }.should raise_error(InputSanitizer::ValueMissingError)
+            lambda { test_case[0].new.call(test_case[2], test_case[1]) }.should raise_error(InputSanitizer::BlankValueError)
           when :invalid_type
             lambda { test_case[0].new.call(test_case[2], test_case[1]) }.should raise_error(InputSanitizer::TypeMismatchError)
           end

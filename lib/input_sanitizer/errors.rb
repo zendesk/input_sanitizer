@@ -12,6 +12,16 @@ module InputSanitizer
 
   class ValueMissingError < ValidationError
     def code
+      :missing
+    end
+
+    def initialize
+      super("is missing")
+    end
+  end
+
+  class BlankValueError < ValidationError
+    def code
       :blank
     end
 

@@ -202,17 +202,31 @@ describe InputSanitizer::V2::PayloadSanitizer do
       let(:sanitizer) { BlankValuesPayloadSanitizer.new(@params) }
       let(:defaults) { { :required_string => 'zz' } }
 
+      it "is invalid if required string is missing" do
+        @params = {}
+        sanitizer.should_not be_valid
+        sanitizer.errors[0].should be_an_instance_of(InputSanitizer::ValueMissingError)
+        sanitizer.errors[0].field.should eq('/required_string')
+      end
+
+      it "is invalid if required string is nil" do
+        @params = { :required_string => nil }
+        sanitizer.should_not be_valid
+        sanitizer.errors[0].should be_an_instance_of(InputSanitizer::BlankValueError)
+        sanitizer.errors[0].field.should eq('/required_string')
+      end
+
       it "is invalid if required string is blank" do
         @params = { :required_string => ' ' }
         sanitizer.should_not be_valid
-        sanitizer.errors[0].should be_an_instance_of(InputSanitizer::ValueMissingError)
+        sanitizer.errors[0].should be_an_instance_of(InputSanitizer::BlankValueError)
         sanitizer.errors[0].field.should eq('/required_string')
       end
 
       it "is invalid if non-nil datetime is null" do
         @params = defaults.merge({ :non_nil_datetime => nil })
         sanitizer.should_not be_valid
-        sanitizer.errors[0].should be_an_instance_of(InputSanitizer::ValueMissingError)
+        sanitizer.errors[0].should be_an_instance_of(InputSanitizer::BlankValueError)
         sanitizer.errors[0].field.should eq('/non_nil_datetime')
       end
 
@@ -224,14 +238,14 @@ describe InputSanitizer::V2::PayloadSanitizer do
       it "is invalid if non-blank url is nil" do
         @params = defaults.merge({ :non_blank_url => nil })
         sanitizer.should_not be_valid
-        sanitizer.errors[0].should be_an_instance_of(InputSanitizer::ValueMissingError)
+        sanitizer.errors[0].should be_an_instance_of(InputSanitizer::BlankValueError)
         sanitizer.errors[0].field.should eq('/non_blank_url')
       end
 
       it "is invalid if non-blank url is blank" do
         @params = defaults.merge({ :non_blank_url => '' })
         sanitizer.should_not be_valid
-        sanitizer.errors[0].should be_an_instance_of(InputSanitizer::ValueMissingError)
+        sanitizer.errors[0].should be_an_instance_of(InputSanitizer::BlankValueError)
         sanitizer.errors[0].field.should eq('/non_blank_url')
       end
     end

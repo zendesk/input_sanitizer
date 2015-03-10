@@ -4,7 +4,7 @@ module InputSanitizer::V2::Types
   class IntegerCheck
     def call(value, options = {})
       if value == nil && (options[:allow_nil] == false || options[:allow_blank] == false || options[:required] == true)
-        raise InputSanitizer::ValueMissingError
+        raise InputSanitizer::BlankValueError
       elsif value == nil
         value
       else
@@ -35,9 +35,9 @@ module InputSanitizer::V2::Types
       if options[:allow] && !options[:allow].include?(value)
         raise InputSanitizer::ValueNotAllowedError.new(value)
       elsif value.blank? && (options[:allow_blank] == false || options[:required] == true)
-        raise InputSanitizer::ValueMissingError
+        raise InputSanitizer::BlankValueError
       elsif value == nil && options[:allow_nil] == false
-        raise InputSanitizer::ValueMissingError
+        raise InputSanitizer::BlankValueError
       elsif value.blank?
         value
       else
@@ -51,7 +51,7 @@ module InputSanitizer::V2::Types
   class BooleanCheck
     def call(value, options = {})
       if value == nil
-        raise InputSanitizer::ValueMissingError
+        raise InputSanitizer::BlankValueError
       elsif [true, false].include?(value)
         value
       else
@@ -75,9 +75,9 @@ module InputSanitizer::V2::Types
   class DatetimeCheck
     def call(value, options = {})
       if value.blank? && (options[:allow_blank] == false || options[:required] == true)
-        raise InputSanitizer::ValueMissingError
+        raise InputSanitizer::BlankValueError
       elsif value == nil && options[:allow_nil] == false
-        raise InputSanitizer::ValueMissingError
+        raise InputSanitizer::BlankValueError
       elsif value.blank?
         value
       else
@@ -92,9 +92,9 @@ module InputSanitizer::V2::Types
   class URLCheck
     def call(value, options = {})
       if value.blank? && (options[:allow_blank] == false || options[:required] == true)
-        raise InputSanitizer::ValueMissingError
+        raise InputSanitizer::BlankValueError
       elsif value == nil && options[:allow_nil] == false
-        raise InputSanitizer::ValueMissingError
+        raise InputSanitizer::BlankValueError
       elsif value.blank?
         value
       else
