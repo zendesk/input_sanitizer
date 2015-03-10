@@ -230,6 +230,16 @@ describe InputSanitizer::Sanitizer do
 
       sanitizer.should_not be_valid
     end
+
+    it "returns an error when given a nil for a nested value" do
+      @params = { :stuff => nil }
+      sanitizer.should_not be_valid
+    end
+
+    it "returns an error when given a string for a nested value" do
+      @params = { :stuff => 'nope' }
+      sanitizer.should_not be_valid
+    end
   end
 
   describe ".converters" do

@@ -82,6 +82,10 @@ class InputSanitizer::V1::Sanitizer
       raise InputSanitizer::ConversionError.new(instance.errors) unless instance.valid?
       instance.cleaned
     }
+
+    keys << {} unless keys.last.is_a?(Hash)
+    keys.last[:nested] = true
+
     self.set_keys_to_converter(keys, converter)
   end
 
@@ -104,6 +108,14 @@ class InputSanitizer::V1::Sanitizer
   end
 
   def clean_field(field, hash)
+    if hash[:options][:nested] && @data.has_key?(field)
+      if hash[:options][:collection]
+        raise InputSanitizer::ConversionError.new("expected an array") unless @data[field].is_a?(Array)
+      else
+        raise InputSanitizer::ConversionError.new("expected a hash") unless @data[field].is_a?(Hash)
+      end
+    end
+
     @cleaned[field] = InputSanitizer::V1::CleanField.call(hash[:options].merge({
       :has_key => @data.has_key?(field),
       :data => @data[field],

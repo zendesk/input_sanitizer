@@ -24,6 +24,10 @@ class InputSanitizer::V2::PayloadSanitizer < InputSanitizer::Sanitizer
       raise InputSanitizer::NestedError.new(instance.errors) unless instance.valid?
       instance.cleaned
     }
+
+    keys << {} unless keys.last.is_a?(Hash)
+    keys.last[:nested] = true
+
     self.set_keys_to_converter(keys, converter)
   end
 
@@ -37,10 +41,20 @@ class InputSanitizer::V2::PayloadSanitizer < InputSanitizer::Sanitizer
     options = hash[:options].clone
     collection = options.delete(:collection)
     default = options.delete(:default)
+    value = @data[field]
+    has_key = @data.has_key?(field)
+
+    if options.delete(:nested) && has_key
+      if collection
+        raise InputSanitizer::TypeMismatchError.new(value, "array") unless value.is_a?(Array)
+      else
+        raise InputSanitizer::TypeMismatchError.new(value, "hash") unless value.is_a?(Hash)
+      end
+    end
 
     @cleaned[field] = InputSanitizer::V2::CleanField.call(
-      :data => @data[field],
-      :has_key => @data.has_key?(field),
+      :data => value,
+      :has_key => has_key,
       :default => default,
       :collection => collection,
       :type => sanitizer_type,

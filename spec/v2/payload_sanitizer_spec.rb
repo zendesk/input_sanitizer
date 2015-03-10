@@ -260,6 +260,21 @@ describe InputSanitizer::V2::PayloadSanitizer do
       end
 
       describe "nested object" do
+        it "returns an error when given a nil for a nested value" do
+          @params = { :address => nil }
+          sanitizer.should_not be_valid
+        end
+
+        it "returns an error when given a string for a nested value" do
+          @params = { :address => 'nope' }
+          sanitizer.should_not be_valid
+        end
+
+        it "returns an error when given an array for a nested value" do
+          @params = { :address => ['a'] }
+          sanitizer.should_not be_valid
+        end
+
         it "returns JSON pointer for invalid fields" do
           @params = { :address => { :city => 0, :zip => 1 } }
           sanitizer.errors.length.should eq(2)
@@ -268,6 +283,21 @@ describe InputSanitizer::V2::PayloadSanitizer do
       end
 
       describe "array of nested objects" do
+        it "returns an error when given a nil for a collection" do
+          @params = { :tags => nil }
+          sanitizer.should_not be_valid
+        end
+
+        it "returns an error when given a string for a collection" do
+          @params = { :tags => 'nope' }
+          sanitizer.should_not be_valid
+        end
+
+        it "returns an error when given a hash for a collection" do
+          @params = { :tags => { :a => 1 } }
+          sanitizer.should_not be_valid
+        end
+
         it "returns JSON pointer for invalid fields" do
           @params = { :tags => [ { :id => 'n', :name => 1 }, { :id => 10, :name => 2 } ] }
           sanitizer.errors.length.should eq(3)
