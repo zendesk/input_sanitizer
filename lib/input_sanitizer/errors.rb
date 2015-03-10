@@ -64,7 +64,7 @@ module InputSanitizer
         'must be a valid URI (include the scheme name part, both http and https are accepted, '\
         'and the hierarchical part)'
       else
-        "expected a value of type: #{type}"
+        "must be a value of type '#{type}'"
       end
 
       super(message)
