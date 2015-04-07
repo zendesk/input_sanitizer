@@ -1,3 +1,6 @@
+0.3.16
+ * Support "null" in CoercingIntegerCheck
+
 0.3.15
  * Added handling of the case when invalid value type is passed to a nested sanitizer
  * Tweaked error messages to unify their form
