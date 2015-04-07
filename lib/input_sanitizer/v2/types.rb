@@ -21,9 +21,17 @@ module InputSanitizer::V2::Types
 
   class CoercingIntegerCheck
     def call(value, options = {})
-      Integer(value).tap do |integer|
-        raise InputSanitizer::ValueError.new(value, options[:minimum], options[:maximum]) if options[:minimum] && integer < options[:minimum]
-        raise InputSanitizer::ValueError.new(value, options[:minimum], options[:maximum]) if options[:maximum] && integer > options[:maximum]
+      if value == nil || value == 'null'
+        if options[:allow_nil] == false || options[:allow_blank] == false || options[:required] == true
+          raise InputSanitizer::BlankValueError
+        else
+          nil
+        end
+      else
+        Integer(value).tap do |integer|
+          raise InputSanitizer::ValueError.new(value, options[:minimum], options[:maximum]) if options[:minimum] && integer < options[:minimum]
+          raise InputSanitizer::ValueError.new(value, options[:minimum], options[:maximum]) if options[:maximum] && integer > options[:maximum]
+        end
       end
     rescue ArgumentError
       raise InputSanitizer::TypeMismatchError.new(value, :integer)
