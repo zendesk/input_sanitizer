@@ -51,6 +51,8 @@ module InputSanitizer::V2::Types
       else
         value.to_s.tap do |string|
           raise InputSanitizer::TypeMismatchError.new(value, :string) unless string == value
+          raise InputSanitizer::ValueError.new(value, options[:minimum], options[:maximum]) if options[:minimum] && string.length < options[:minimum]
+          raise InputSanitizer::ValueError.new(value, options[:minimum], options[:maximum]) if options[:maximum] && string.length > options[:maximum]
         end
       end
     end

@@ -24,7 +24,7 @@ class TestedPayloadSanitizer < InputSanitizer::V2::PayloadSanitizer
   datetime :datetime_attribute
 
   url :website
-  string :limited_collection, :collection => { :minimum => 1, :maximum => 2 }
+  string :limited_collection, :collection => { :minimum => 1, :maximum => 2 }, :minimum => 2, :maximum => 12
 end
 
 class BlankValuesPayloadSanitizer < InputSanitizer::V2::PayloadSanitizer
@@ -61,6 +61,16 @@ describe InputSanitizer::V2::PayloadSanitizer do
     it "is valid when there are just enough elements" do
       @params = { :limited_collection => ['goldilocks'] }
       sanitizer.should be_valid
+    end
+
+    it "is invalid when any of the elements are too long" do
+      @params = { :limited_collection => ['more_than_the_limit'] }
+      sanitizer.should_not be_valid
+    end
+
+    it "is invalid when any of the elements are too short" do
+      @params = { :limited_collection => ['a'] }
+      sanitizer.should_not be_valid
     end
   end
 
