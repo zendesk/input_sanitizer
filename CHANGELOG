@@ -1,3 +1,6 @@
+0.3.18
+ * Fix nil-value-error in SpecificValuesConverter
+
 0.3.17
  * Added a minimum and maximum string length checks
 
