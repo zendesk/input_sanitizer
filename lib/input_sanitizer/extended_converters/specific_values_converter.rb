@@ -8,7 +8,7 @@ module InputSanitizer
       case
       when @valid_values.include?(value)
         value
-      when @valid_values.include?(value.to_sym)
+      when value.respond_to?(:to_sym) && @valid_values.include?(value.to_sym)
         value.to_sym
       else
         values_joined = @valid_values.join(", ")

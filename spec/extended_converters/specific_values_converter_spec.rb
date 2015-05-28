@@ -13,6 +13,10 @@ describe InputSanitizer::SpecificValuesConverter do
     lambda { converter.call("c") }.should raise_error(InputSanitizer::ConversionError)
   end
 
+  it "raises on nil value" do
+    lambda { converter.call(nil) }.should raise_error(InputSanitizer::ConversionError)
+  end
+
   context "when specific values are strings" do
     let(:values) { ["a", "b"] }
 
