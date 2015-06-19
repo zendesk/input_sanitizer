@@ -83,7 +83,14 @@ module InputSanitizer::V2::Types
   end
 
   class DatetimeCheck
+    def initialize(options = {})
+      @check_date = options && options[:check_date]
+      @klass = @check_date ? Date : DateTime
+    end
+
     def call(value, options = {})
+      raise InputSanitizer::TypeMismatchError.new(value, :datetime) unless value == nil || value.is_a?(String)
+
       if value.blank? && (options[:allow_blank] == false || options[:required] == true)
         raise InputSanitizer::BlankValueError
       elsif value == nil && options[:allow_nil] == false
@@ -91,11 +98,13 @@ module InputSanitizer::V2::Types
       elsif value.blank?
         value
       else
-        DateTime.parse(value)
+        @klass.parse(value).tap do |datetime|
+          raise InputSanitizer::ValueError.new(value, options[:minimum], options[:maximum]) if options[:minimum] && datetime < options[:minimum]
+          raise InputSanitizer::ValueError.new(value, options[:minimum], options[:maximum]) if options[:maximum] && datetime > options[:maximum]
+        end
       end
-
-    rescue ArgumentError
-      raise InputSanitizer::TypeMismatchError.new(value, :datetime)
+    rescue ArgumentError, TypeError
+      raise InputSanitizer::TypeMismatchError.new(value, @check_date ? :date : :datetime)
     end
   end
 

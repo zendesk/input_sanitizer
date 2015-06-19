@@ -9,6 +9,7 @@ class InputSanitizer::V2::PayloadSanitizer < InputSanitizer::Sanitizer
       :string => InputSanitizer::V2::Types::StringCheck.new,
       :boolean => InputSanitizer::V2::Types::BooleanCheck.new,
       :datetime => InputSanitizer::V2::Types::DatetimeCheck.new,
+      :date => InputSanitizer::V2::Types::DatetimeCheck.new(:check_date => true),
       :url => InputSanitizer::V2::Types::URLCheck.new,
     }
   end
