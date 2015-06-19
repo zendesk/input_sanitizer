@@ -22,7 +22,7 @@ class TestedPayloadSanitizer < InputSanitizer::V2::PayloadSanitizer
   string :string_attribute
   boolean :bool_attribute
   datetime :datetime_attribute
-  date :date_attribute, :minimum => Date.new(2015, 01, 01), :maximum => Date.new(2015, 12, 31)
+  date :date_attribute, :minimum => Date.new(-2015, 01, 01), :maximum => Date.new(2015, 12, 31)
 
   url :website
   string :limited_collection, :collection => { :minimum => 1, :maximum => 2 }, :minimum => 2, :maximum => 12
@@ -205,13 +205,18 @@ describe InputSanitizer::V2::PayloadSanitizer do
     end
 
     it "is invalid when given an incorrect date" do
-      @params = { :date_attribute => "20140827" }
+      @params = { :date_attribute => "invalid" }
       sanitizer.should_not be_valid
       sanitizer.errors[0].field.should eq('/date_attribute')
     end
 
     it "is valid when given a correct date" do
       @params = { :date_attribute => "2015-08-27" }
+      sanitizer.should be_valid
+    end
+
+    it "is valid when given a correct negative date" do
+      @params = { :date_attribute => "-2014-08-27" }
       sanitizer.should be_valid
     end
 
