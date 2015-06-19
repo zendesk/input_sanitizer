@@ -89,7 +89,7 @@ module InputSanitizer::V2::Types
     end
 
     def call(value, options = {})
-      raise InputSanitizer::TypeMismatchError.new(value, :datetime) unless value == nil || value.is_a?(String)
+      raise InputSanitizer::TypeMismatchError.new(value, @check_date ? :date : :datetime) unless value == nil || value.is_a?(String)
 
       if value.blank? && (options[:allow_blank] == false || options[:required] == true)
         raise InputSanitizer::BlankValueError
