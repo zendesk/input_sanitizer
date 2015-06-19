@@ -1,3 +1,7 @@
+0.3.19
+ * Support for checking dates - new `:date` dsl keyword
+ * Fixed handling TypeErrors in DatetimeCheck
+
 0.3.18
  * Fix nil-value-error in SpecificValuesConverter
 
