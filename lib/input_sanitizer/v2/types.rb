@@ -127,17 +127,40 @@ module InputSanitizer::V2::Types
 
   class SortByCheck
     def call(value, options = {})
-      key, direction = value.to_s.split(':', 2)
+      check_options!(options)
+
+      key, direction = split(value)
       direction = 'asc' if direction.blank?
 
-      unless options[:allow].include?(key) && allowed_directions.include?(direction)
+      unless valid?(key, direction, options)
         raise InputSanitizer::ValueNotAllowedError.new(value)
       end
 
       [key, direction]
     end
 
-    private
+  private
+    def valid?(key, direction, options)
+      allowed_keys = options[:allow]
+      fallback = options[:fallback]
+
+      allowed_directions.include?(direction) &&
+        ((allowed_keys && allowed_keys.include?(key)) ||
+          (fallback && fallback.call(key, direction, options)))
+    end
+
+    def split(value)
+      head, _, tail = value.to_s.rpartition(':')
+      head.empty? ? [tail, head] : [head, tail]
+    end
+
+    def check_options!(options)
+      fallback = options[:fallback]
+      if fallback && !fallback.respond_to?(:call)
+        raise ArgumentError, ":fallback option must be a proc"
+      end
+    end
+
     def allowed_directions
       ['asc', 'desc']
     end
