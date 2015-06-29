@@ -1,4 +1,11 @@
 class InputSanitizer::V2::PayloadSanitizer < InputSanitizer::Sanitizer
+  def initialize(data, validation_context = {})
+    super data
+
+    @validation_context= validation_context || {}
+    raise ArgumentError, "validation_context must be a Hash" unless @validation_context && @validation_context.is_a?(Hash)
+  end
+
   def error_collection
     @error_collection ||= InputSanitizer::V2::ErrorCollection.new(errors)
   end
@@ -38,6 +45,18 @@ class InputSanitizer::V2::PayloadSanitizer < InputSanitizer::Sanitizer
     @data.reject { |key, _| self.class.fields.keys.include?(key) }.each { |key, _| @errors << InputSanitizer::ExtraneousParamError.new("/#{key}") }
   end
 
+  def prepare_options!(options)
+    return options if @validation_context.empty?
+    intersection = options.keys & @validation_context.keys
+    unless intersection.empty?
+      message = "validation context and converter options have the same keys: #{intersection}. " \
+        "In order to proceed please fix the configuration. " \
+        "In the meantime aborting ..."
+      raise RuntimeError, message
+    end
+    options.merge(@validation_context)
+  end
+
   def clean_field(field, hash)
     options = hash[:options].clone
     collection = options.delete(:collection)
@@ -60,7 +79,7 @@ class InputSanitizer::V2::PayloadSanitizer < InputSanitizer::Sanitizer
       :collection => collection,
       :type => sanitizer_type,
       :converter => hash[:converter],
-      :options => options
+      :options => prepare_options!(options)
     )
   rescue InputSanitizer::OptionalValueOmitted
   rescue InputSanitizer::ValidationError => error
