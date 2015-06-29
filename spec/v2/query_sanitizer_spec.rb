@@ -11,7 +11,13 @@ class TestedQuerySanitizer < InputSanitizer::V2::QuerySanitizer
 
   integer :ids, :collection => true
   string :tags, :collection => true
-  sort_by %w(name updated_at created_at)
+  sort_by %w(name updated_at created_at), :fallback =>  Proc.new { |key, direction|  key == 'custom_field' }
+end
+
+class ContextQuerySanitizer < InputSanitizer::V2::QuerySanitizer
+  sort_by %w(id created_at updated_at), :fallback => Proc.new { |key, _, context|
+    context && context[:allowed] && context[:allowed].include?(key)
+  }
 end
 
 describe InputSanitizer::V2::QuerySanitizer do
@@ -177,6 +183,46 @@ describe InputSanitizer::V2::QuerySanitizer do
       @params = { :sort_by => "name" }
       sanitizer.should be_valid
       sanitizer[:sort_by].should eq(["name", "asc"])
+    end
+
+    it "bails to fallback" do
+      @params  = { :sort_by => 'custom_field' }
+      sanitizer.should be_valid
+      sanitizer[:sort_by].should eq(["custom_field", "asc"])
+    end
+
+    [
+      ['name', true, ["name", "asc"]],
+      ['name:asc', true, ["name", "asc"]],
+      ['name:desc', true, ["name", "desc"]],
+      ['name:', true, ["name", "asc"]],
+      ['custom_field', true, ['custom_field', 'asc']],
+      ['custom_field:asc', true, ['custom_field', 'asc']],
+      ['custom_field:desc', true, ['custom_field', 'desc']],
+      ['custom_field:', true, ['custom_field', 'asc']],
+      ['unknown', false, nil],
+      ['name:invalid', false, nil],
+      ['custom_field:invalid', false, nil],
+      ['custom_field2', false, nil]
+    ].each do |sort_param, valid, expectation|
+      it "sort by #{sort_param} and returns #{valid}" do
+        @params  = { :sort_by => sort_param }
+        sanitizer.valid?.should eq(valid)
+        sanitizer[:sort_by].should eq(expectation)
+      end
+    end
+  end
+
+  describe 'validation context' do
+    let(:sanitizer) { ContextQuerySanitizer.new(@params, @context) }
+
+    describe 'sort_by' do
+      it 'passes context to :fallback' do
+        @params  = { :sort_by => 'custom_field.external_id' }
+        @context = { :allowed => ['custom_field.external_id'] }
+        sanitizer.should be_valid
+        sanitizer[:sort_by].should eq(["custom_field.external_id", "asc"])
+      end
     end
   end
 end
