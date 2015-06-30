@@ -1,9 +1,15 @@
 class InputSanitizer::V2::PayloadSanitizer < InputSanitizer::Sanitizer
+  attr_reader :validation_context
+
   def initialize(data, validation_context = {})
     super data
 
-    @validation_context= validation_context || {}
-    raise ArgumentError, "validation_context must be a Hash" unless @validation_context && @validation_context.is_a?(Hash)
+    self.validation_context = validation_context || {}
+  end
+
+  def validation_context=(context)
+    raise ArgumentError, "validation_context must be a Hash" unless context && context.is_a?(Hash)
+    @validation_context = context
   end
 
   def error_collection
@@ -27,8 +33,8 @@ class InputSanitizer::V2::PayloadSanitizer < InputSanitizer::Sanitizer
     sanitizer = options.delete(:sanitizer)
     keys.push(options)
     raise "You did not define a sanitizer for nested value" if sanitizer == nil
-    converter = lambda { |value, _|
-      instance = sanitizer.new(value)
+    converter = lambda { |value, converter_options|
+      instance = sanitizer.new(value, converter_options)
       raise InputSanitizer::NestedError.new(instance.errors) unless instance.valid?
       instance.cleaned
     }

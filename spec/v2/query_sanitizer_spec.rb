@@ -20,6 +20,10 @@ class ContextQuerySanitizer < InputSanitizer::V2::QuerySanitizer
   }
 end
 
+class ContextForwardingSanitizer < InputSanitizer::V2::PayloadSanitizer
+  nested :nested1, :sanitizer => ContextQuerySanitizer
+end
+
 describe InputSanitizer::V2::QuerySanitizer do
   let(:sanitizer) { TestedQuerySanitizer.new(@params) }
 
@@ -222,6 +226,17 @@ describe InputSanitizer::V2::QuerySanitizer do
         @context = { :allowed => ['custom_field.external_id'] }
         sanitizer.should be_valid
         sanitizer[:sort_by].should eq(["custom_field.external_id", "asc"])
+      end
+    end
+
+    describe 'forwarding to nested sanitizers' do
+      it 'passes context down' do
+        params  = { :nested1 => { :sort_by => 'custom_field.external_id' } }
+        context = { :allowed => ['custom_field.external_id'] }
+        sanitizer = ContextForwardingSanitizer.new(params, context)
+
+        sanitizer.should be_valid
+        sanitizer[:nested1].should eq(:sort_by => ["custom_field.external_id", "asc"])
       end
     end
   end
