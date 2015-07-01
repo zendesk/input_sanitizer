@@ -1,13 +1,20 @@
-class InputSanitizer::V2::PayloadTransform < MethodStruct.new(:original_payload)
+class InputSanitizer::V2::PayloadTransform
+  attr_reader :original_payload, :context
+
+  def self.call(original_payload, context = {})
+    new(original_payload, context).call
+  end
+
+  def initialize(original_payload, context = {})
+    fail "#{self.class} is missing #transform method" unless respond_to?(:transform)
+    @original_payload, @context = original_payload, context
+  end
+
   def call
     transform
     payload
   end
 
-  def initialize(*args)
-    fail "#{self.class} is missing #transform method" unless respond_to?(:transform)
-    super
-  end
 
   private
   def rename(from, to)
