@@ -11,7 +11,7 @@ class TestedQuerySanitizer < InputSanitizer::V2::QuerySanitizer
 
   integer :ids, :collection => true
   string :tags, :collection => true
-  sort_by %w(name updated_at created_at), :fallback =>  Proc.new { |key, direction|  key == 'custom_field' }
+  sort_by %w(name updated_at created_at), :default => 'name:asc', :fallback =>  Proc.new { |key, direction|  key == 'custom_field' }
 end
 
 class ContextQuerySanitizer < InputSanitizer::V2::QuerySanitizer
@@ -177,6 +177,12 @@ describe InputSanitizer::V2::QuerySanitizer do
   end
 
   describe "sort_by" do
+    it "considers default" do
+      @params = { }
+      sanitizer.should be_valid
+      sanitizer[:sort_by].should eq(["name", "asc"])
+    end
+
     it "accepts correct sorting format" do
       @params = { :sort_by => "updated_at:desc" }
       sanitizer.should be_valid

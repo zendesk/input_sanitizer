@@ -3,7 +3,7 @@ class InputSanitizer::V2::CleanField < MethodStruct.new(:data, :has_key, :defaul
     if has_key
       convert
     elsif default
-      converter.call(default)
+      converter.call(default, options)
     elsif options[:required]
       raise InputSanitizer::ValueMissingError
     else
