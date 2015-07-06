@@ -5,6 +5,7 @@ class InputSanitizer::V2::QuerySanitizer < InputSanitizer::V2::PayloadSanitizer
       :string => InputSanitizer::V2::Types::StringCheck.new,
       :boolean => InputSanitizer::V2::Types::CoercingBooleanCheck.new,
       :datetime => InputSanitizer::V2::Types::DatetimeCheck.new,
+      :date => InputSanitizer::V2::Types::DatetimeCheck.new(:check_date => true),
       :url => InputSanitizer::V2::Types::URLCheck.new,
     }
   end
