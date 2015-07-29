@@ -132,6 +132,12 @@ module InputSanitizer::V2::Types
       key, direction = split(value)
       direction = 'asc' if direction.blank?
 
+      # special case when fallback takes care of separator sanitization e.g. custom fields
+      if options[:fallback] && !allowed_directions.include?(direction)
+        direction = 'asc'
+        key = value
+      end
+
       unless valid?(key, direction, options)
         raise InputSanitizer::ValueNotAllowedError.new(value)
       end
@@ -157,7 +163,7 @@ module InputSanitizer::V2::Types
     def check_options!(options)
       fallback = options[:fallback]
       if fallback && !fallback.respond_to?(:call)
-        raise ArgumentError, ":fallback option must be a proc"
+        raise ArgumentError, ":fallback option must respond to method :call (proc, lambda etc)"
       end
     end
 

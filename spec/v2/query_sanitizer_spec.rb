@@ -1,5 +1,13 @@
 require 'spec_helper'
 
+class CustomFieldsSortByQueryFallback
+  def self.call(key, direction, context)
+    filterable_keys = %w(slt number)
+    _, field = key.split(':', 2)
+    filterable_keys.include?(field)
+  end
+end
+
 class TestedQuerySanitizer < InputSanitizer::V2::QuerySanitizer
   string :status, :allow => ['', 'current', 'past']
 
@@ -11,7 +19,7 @@ class TestedQuerySanitizer < InputSanitizer::V2::QuerySanitizer
 
   integer :ids, :collection => true
   string :tags, :collection => true
-  sort_by %w(name updated_at created_at), :default => 'name:asc', :fallback =>  Proc.new { |key, direction|  key == 'custom_field' }
+  sort_by %w(name updated_at created_at), :default => 'name:asc', :fallback => CustomFieldsSortByQueryFallback
 end
 
 class ContextQuerySanitizer < InputSanitizer::V2::QuerySanitizer
@@ -196,9 +204,9 @@ describe InputSanitizer::V2::QuerySanitizer do
     end
 
     it "bails to fallback" do
-      @params  = { :sort_by => 'custom_field' }
+      @params  = { :sort_by => 'custom_field:slt:asc' }
       sanitizer.should be_valid
-      sanitizer[:sort_by].should eq(["custom_field", "asc"])
+      sanitizer[:sort_by].should eq(["custom_field:slt", "asc"])
     end
 
     [
@@ -206,13 +214,17 @@ describe InputSanitizer::V2::QuerySanitizer do
       ['name:asc', true, ["name", "asc"]],
       ['name:desc', true, ["name", "desc"]],
       ['name:', true, ["name", "asc"]],
-      ['custom_field', true, ['custom_field', 'asc']],
-      ['custom_field:asc', true, ['custom_field', 'asc']],
-      ['custom_field:desc', true, ['custom_field', 'desc']],
-      ['custom_field:', true, ['custom_field', 'asc']],
+      ['custom_field:slt', true, ['custom_field:slt', 'asc']],
+      ['custom_field:slt:', true, ['custom_field:slt', 'asc']],
+      ['custom_field:slt:asc', true, ['custom_field:slt', 'asc']],
+      ['custom_field:slt:desc', true, ['custom_field:slt', 'desc']],
       ['unknown', false, nil],
       ['name:invalid', false, nil],
+      ['custom_field', false, nil],
+      ['custom_field:', false, nil],
       ['custom_field:invalid', false, nil],
+      ['custom_field:invalid:asc', false, nil],
+      ['custom_field:invalid:desc', false, nil],
       ['custom_field2', false, nil]
     ].each do |sort_param, valid, expectation|
       it "sort by #{sort_param} and returns #{valid}" do
