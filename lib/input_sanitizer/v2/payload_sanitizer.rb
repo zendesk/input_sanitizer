@@ -1,4 +1,17 @@
 class InputSanitizer::V2::PayloadSanitizer < InputSanitizer::Sanitizer
+  attr_reader :validation_context
+
+  def initialize(data, validation_context = {})
+    super data
+
+    self.validation_context = validation_context || {}
+  end
+
+  def validation_context=(context)
+    raise ArgumentError, "validation_context must be a Hash" unless context && context.is_a?(Hash)
+    @validation_context = context
+  end
+
   def error_collection
     @error_collection ||= InputSanitizer::V2::ErrorCollection.new(errors)
   end
@@ -20,8 +33,8 @@ class InputSanitizer::V2::PayloadSanitizer < InputSanitizer::Sanitizer
     sanitizer = options.delete(:sanitizer)
     keys.push(options)
     raise "You did not define a sanitizer for nested value" if sanitizer == nil
-    converter = lambda { |value, _|
-      instance = sanitizer.new(value)
+    converter = lambda { |value, converter_options|
+      instance = sanitizer.new(value, converter_options)
       raise InputSanitizer::NestedError.new(instance.errors) unless instance.valid?
       instance.cleaned
     }
@@ -36,6 +49,18 @@ class InputSanitizer::V2::PayloadSanitizer < InputSanitizer::Sanitizer
   def perform_clean
     super
     @data.reject { |key, _| self.class.fields.keys.include?(key) }.each { |key, _| @errors << InputSanitizer::ExtraneousParamError.new("/#{key}") }
+  end
+
+  def prepare_options!(options)
+    return options if @validation_context.empty?
+    intersection = options.keys & @validation_context.keys
+    unless intersection.empty?
+      message = "validation context and converter options have the same keys: #{intersection}. " \
+        "In order to proceed please fix the configuration. " \
+        "In the meantime aborting ..."
+      raise RuntimeError, message
+    end
+    options.merge(@validation_context)
   end
 
   def clean_field(field, hash)
@@ -60,7 +85,7 @@ class InputSanitizer::V2::PayloadSanitizer < InputSanitizer::Sanitizer
       :collection => collection,
       :type => sanitizer_type,
       :converter => hash[:converter],
-      :options => options
+      :options => prepare_options!(options)
     )
   rescue InputSanitizer::OptionalValueOmitted
   rescue InputSanitizer::ValidationError => error
