@@ -54,14 +54,24 @@ class InputSanitizer::V2::PayloadSanitizer < InputSanitizer::Sanitizer
 
   def prepare_options!(options)
     return options if @validation_context.empty?
-    intersection = options.keys & @validation_context.keys
+    context = @validation_context.dup
+    context_provided_values = context.delete(:provided)
+
+    intersection = options.keys & context.keys
+
     unless intersection.empty?
       message = "validation context and converter options have the same keys: #{intersection}. " \
         "In order to proceed please fix the configuration. " \
         "In the meantime aborting ..."
       raise RuntimeError, message
     end
-    options.merge(@validation_context)
+
+    if context_provided_values
+      options[:provided] ||= {}
+      options[:provided] = options[:provided].merge(context_provided_values)
+    end
+
+    options.merge(context)
   end
 
   def clean_field(field, hash)
@@ -71,6 +81,10 @@ class InputSanitizer::V2::PayloadSanitizer < InputSanitizer::Sanitizer
     has_key = @data.has_key?(field)
     value = @data[field]
     is_nested = options.delete(:nested)
+
+    provide = options.delete(:provide)
+    provided = Array(provide).inject({}) { |memo, value| memo[value] = @data[value]; memo }
+    options[:provided] = provided
 
     if is_nested && has_key
       if collection
