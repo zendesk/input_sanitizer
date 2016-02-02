@@ -1,3 +1,8 @@
+0.3.22
+ * Fix errors for Rails 4.2
+ 	 It was impossible to call stringify_keys on RestrictedHash which Rails
+	 relies on.
+
 0.3.21
  * Added Date converter
  * Support for validation context
