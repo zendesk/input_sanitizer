@@ -13,6 +13,7 @@ end
 
 class TestedPayloadSanitizer < InputSanitizer::V2::PayloadSanitizer
   integer :array, :collection => true
+  integer :array_nil, :collection => true, :allow_nil => true
   string :status, :allow => ['current', 'past']
   string :status_with_empty, :allow => ['', 'current', 'past']
   nested :address, :sanitizer => AddressSanitizer
@@ -47,6 +48,11 @@ describe InputSanitizer::V2::PayloadSanitizer do
 
     it "is valid if collection is an array" do
       @params = { :array => [] }
+      sanitizer.should be_valid
+    end
+
+    it "is valid if collection is an nil and allow_nil is passed" do
+      @params = { :array_nil => nil }
       sanitizer.should be_valid
     end
 
