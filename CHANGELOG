@@ -1,3 +1,6 @@
+0.3.23
+ * Accept allow_nil option for collection in payload sanitizers
+
 0.3.22
  * Fix errors for Rails 4.2
  	 It was impossible to call stringify_keys on RestrictedHash which Rails
