@@ -1,5 +1,7 @@
 class InputSanitizer::V2::CleanPayloadCollectionField < MethodStruct.new(:data, :converter, :collection, :options)
   def call
+    return nil if options[:allow_nil] && data == nil
+
     validate_type
     validate_size
 
