@@ -1,3 +1,6 @@
+0.3.24
+ * Loosen activesupport version requirements on ruby 1.8
+
 0.3.23
  * Accept allow_nil option for collection in payload sanitizers
 
