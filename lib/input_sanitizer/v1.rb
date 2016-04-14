@@ -9,5 +9,14 @@ require File.join(dir, 'v1', 'clean_field')
 require File.join(dir, 'v1', 'sanitizer')
 require File.join(dir, 'extended_converters')
 
-InputSanitizer::Sanitizer = InputSanitizer::V1::Sanitizer
-InputSanitizer::AllowNil = InputSanitizer::V1::AllowNil
+# Backward compatibility
+module InputSanitizer
+  Sanitizer = V1::Sanitizer
+
+  IntegerConverter = V1::IntegerConverter
+  StringConverter = V1::StringConverter
+  DateConverter = V1::DateConverter
+  TimeConverter = V1::TimeConverter
+  BooleanConverter = V1::BooleanConverter
+  AllowNil = V1::AllowNil
+end
