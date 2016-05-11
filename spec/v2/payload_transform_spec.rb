@@ -28,9 +28,9 @@ describe InputSanitizer::V2::PayloadTransform do
   let(:payload) do
     {
       :name => 'wat',
-      :value => 1234,
+      'value' => 1234,
       :thing => 'zzz',
-      :address => {
+      'address' => {
         :line1 => 'wup wup',
         :city => 'Krakow'
       }
@@ -63,7 +63,7 @@ describe InputSanitizer::V2::PayloadTransform do
     let(:payload) { { :value => nil } }
 
     it "renames it correctly" do
-      subject.should eq({ :scope => nil })
+      subject.should eq({ 'scope' => nil })
     end
   end
 
@@ -71,7 +71,8 @@ describe InputSanitizer::V2::PayloadTransform do
     let(:payload) { { :name => 'wat' } }
 
     it "still successfully transforms data" do
-      subject.should eq({ :name => 'wat' })
+      subject.should eq({ 'name' => 'wat' })
+      subject[:name].should eq('wat')
     end
   end
 
@@ -91,7 +92,7 @@ describe InputSanitizer::V2::PayloadTransform do
     end
 
     it "works" do
-      subject.should eq({ :scope => 1 })
+      subject.should eq({ 'scope' => 1 })
     end
   end
 end

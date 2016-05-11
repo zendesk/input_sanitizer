@@ -1,3 +1,5 @@
+require 'active_support/core_ext/hash/indifferent_access'
+
 class InputSanitizer::V2::PayloadTransform
   attr_reader :original_payload, :context
 
@@ -14,7 +16,6 @@ class InputSanitizer::V2::PayloadTransform
     transform
     payload
   end
-
 
   private
   def rename(from, to)
@@ -36,6 +37,6 @@ class InputSanitizer::V2::PayloadTransform
   end
 
   def payload
-    @payload ||= original_payload.dup
+    @payload ||= original_payload.with_indifferent_access
   end
 end
