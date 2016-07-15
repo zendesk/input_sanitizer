@@ -36,6 +36,14 @@ class BlankValuesPayloadSanitizer < InputSanitizer::V2::PayloadSanitizer
   url :non_blank_url, :allow_blank => false
 end
 
+class IgnoredValuesPayloadSanitizer < InputSanitizer::V2::PayloadSanitizer
+  integer :ignored, :ignore => true
+end
+
+class RequiredButIgnoredValuesPayloadSanitizer < InputSanitizer::V2::PayloadSanitizer
+  integer :ignored, :ignore => true, :required => true
+end
+
 describe InputSanitizer::V2::PayloadSanitizer do
   let(:sanitizer) { TestedPayloadSanitizer.new(@params) }
   let(:cleaned) { sanitizer.cleaned }
@@ -371,6 +379,55 @@ describe InputSanitizer::V2::PayloadSanitizer do
           ec = sanitizer.error_collection
           ec.length.should eq(5)
         end
+      end
+    end
+  end
+
+  describe "ignoring params" do
+    context "when param is ignored" do
+      let(:sanitizer) { IgnoredValuesPayloadSanitizer.new(@params) }
+
+      it "is valid when ignored value is provided" do
+        @params = { :ignored => 1 }
+        sanitizer.should be_valid
+      end
+
+      it "does not include ignored value in cleaned hash" do
+        @params = { :ignored => 1 }
+        sanitizer.cleaned.should == { }
+      end
+
+      it "is not valid when ignored value has wrong type" do
+        @params = { :ignored => '1' }
+        sanitizer.should_not be_valid
+      end
+
+      it "is valid if ignored value is not specified" do
+        @params = { }
+        sanitizer.should be_valid
+      end
+    end
+    context "when param is ignored but required" do
+      let(:sanitizer) { RequiredButIgnoredValuesPayloadSanitizer.new(@params) }
+
+      it "is valid when ignored value is provided" do
+        @params = { :ignored => 1 }
+        sanitizer.should be_valid
+      end
+
+      it "does not include ignored value in cleaned hash" do
+        @params = { :ignored => 1 }
+        sanitizer.cleaned.should == { }
+      end
+
+      it "is not valid when ignored value has wrong type" do
+        @params = { :ignored => '1' }
+        sanitizer.should_not be_valid
+      end
+
+      it "is valid if ignored value is not specified" do
+        @params = { }
+        sanitizer.should_not be_valid
       end
     end
   end
