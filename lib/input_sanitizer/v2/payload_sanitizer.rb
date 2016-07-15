@@ -78,7 +78,7 @@ class InputSanitizer::V2::PayloadSanitizer < InputSanitizer::Sanitizer
       end
     end
 
-    @cleaned[field] = InputSanitizer::V2::CleanField.call(
+    value = InputSanitizer::V2::CleanField.call(
       :data => value,
       :has_key => has_key,
       :default => default,
@@ -87,6 +87,7 @@ class InputSanitizer::V2::PayloadSanitizer < InputSanitizer::Sanitizer
       :converter => hash[:converter],
       :options => prepare_options!(options)
     )
+    @cleaned[field] = value unless options[:ignore]
   rescue InputSanitizer::OptionalValueOmitted
   rescue InputSanitizer::ValidationError => error
     @errors += handle_error(field, error)
