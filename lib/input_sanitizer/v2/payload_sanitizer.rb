@@ -67,10 +67,15 @@ class InputSanitizer::V2::PayloadSanitizer < InputSanitizer::Sanitizer
     options = hash[:options].clone
     collection = options.delete(:collection)
     default = options.delete(:default)
-    value = @data[field]
     has_key = @data.has_key?(field)
+    is_nested = options.delete(:nested)
 
-    if options.delete(:nested) && has_key
+    value = @data[field]
+    if is_nested && options[:allow_nil] && value.nil? && !collection
+      value = {}
+    end
+
+    if is_nested && has_key
       if collection
         raise InputSanitizer::TypeMismatchError.new(value, "array") unless value.is_a?(Array)
       else
