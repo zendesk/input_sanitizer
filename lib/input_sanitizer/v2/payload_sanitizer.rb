@@ -34,7 +34,7 @@ class InputSanitizer::V2::PayloadSanitizer < InputSanitizer::Sanitizer
     keys.push(options)
     raise "You did not define a sanitizer for nested value" if sanitizer == nil
     converter = lambda { |value, converter_options|
-      instance = sanitizer.new(value, converter_options)
+      instance = InputSanitizer::V2::NestedSanitizerFactory.for(sanitizer, value, converter_options)
       raise InputSanitizer::NestedError.new(instance.errors) unless instance.valid?
       instance.cleaned
     }
@@ -67,13 +67,14 @@ class InputSanitizer::V2::PayloadSanitizer < InputSanitizer::Sanitizer
     options = hash[:options].clone
     collection = options.delete(:collection)
     default = options.delete(:default)
-    value = @data[field]
     has_key = @data.has_key?(field)
+    value = @data[field]
+    is_nested = options.delete(:nested)
 
-    if options.delete(:nested) && has_key
+    if is_nested && has_key
       if collection
         raise InputSanitizer::TypeMismatchError.new(value, "array") unless value.is_a?(Array)
-      else
+      elsif !options[:allow_nil] || (options[:allow_nil] && !value.nil?)
         raise InputSanitizer::TypeMismatchError.new(value, "hash") unless value.is_a?(Hash)
       end
     end

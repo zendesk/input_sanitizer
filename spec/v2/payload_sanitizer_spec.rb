@@ -17,6 +17,7 @@ class TestedPayloadSanitizer < InputSanitizer::V2::PayloadSanitizer
   string :status, :allow => ['current', 'past']
   string :status_with_empty, :allow => ['', 'current', 'past']
   nested :address, :sanitizer => AddressSanitizer
+  nested :nullable_address, :sanitizer => AddressSanitizer, :allow_nil => true
   nested :tags, :sanitizer => TagSanitizer, :collection => true
 
   integer :integer_attribute, :minimum => 1, :maximum => 100
@@ -323,6 +324,12 @@ describe InputSanitizer::V2::PayloadSanitizer do
           @params = { :address => { :city => 0, :zip => 1 } }
           sanitizer.errors.length.should eq(2)
           sanitizer.errors.map(&:field).should contain_exactly('/address/city', '/address/zip')
+        end
+
+        it "allows nil with `allow_nil` flag" do
+          @params = { :nullable_address => nil }
+          sanitizer.should be_valid
+          sanitizer.cleaned.fetch(:nullable_address).should eq(nil)
         end
       end
 
