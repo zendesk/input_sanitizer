@@ -1,3 +1,6 @@
+0.3.27
+ * Accept `allow_nil` option in nested sanitizer
+
 0.3.26
  * PayloadTransform will always return HashWithIndifferentAccess (even if given RestrictedHash)
 
