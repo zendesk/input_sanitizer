@@ -329,7 +329,7 @@ describe InputSanitizer::V2::PayloadSanitizer do
         it "sanitizes to empty hash when given a nil with `allow_nil` flag" do
           @params = { :nullable_address => nil }
           sanitizer.should be_valid
-          sanitizer.cleaned[:nullable_address].should eq({})
+          sanitizer.cleaned.fetch(:nullable_address).should eq(nil)
         end
       end
 
