@@ -326,7 +326,7 @@ describe InputSanitizer::V2::PayloadSanitizer do
           sanitizer.errors.map(&:field).should contain_exactly('/address/city', '/address/zip')
         end
 
-        it "sanitizes to empty hash when given a nil with `allow_nil` flag" do
+        it "allows nil with `allow_nil` flag" do
           @params = { :nullable_address => nil }
           sanitizer.should be_valid
           sanitizer.cleaned.fetch(:nullable_address).should eq(nil)
