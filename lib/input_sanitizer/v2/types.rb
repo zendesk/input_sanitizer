@@ -40,7 +40,7 @@ module InputSanitizer::V2::Types
 
   class StringCheck
     def call(value, options = {})
-      if options[:allow] && !options[:allow].include?(value)
+      if options[:allow] && !allowed_value?(options[:allow], value)
         raise InputSanitizer::ValueNotAllowedError.new(value)
       elsif value.blank? && (options[:allow_blank] == false || options[:required] == true)
         raise InputSanitizer::BlankValueError
@@ -54,6 +54,16 @@ module InputSanitizer::V2::Types
           raise InputSanitizer::ValueError.new(value, options[:minimum], options[:maximum]) if options[:minimum] && string.length < options[:minimum]
           raise InputSanitizer::ValueError.new(value, options[:minimum], options[:maximum]) if options[:maximum] && string.length > options[:maximum]
         end
+      end
+    end
+
+    private
+
+    def allowed_value?(allowed_values, value)
+      if allowed_values.respond_to?(:call)
+        allowed_values.call.include?(value)
+      else
+        allowed_values.include?(value)
       end
     end
   end

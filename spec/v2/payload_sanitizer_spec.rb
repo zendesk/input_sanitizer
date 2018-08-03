@@ -36,6 +36,10 @@ class BlankValuesPayloadSanitizer < InputSanitizer::V2::PayloadSanitizer
   url :non_blank_url, :allow_blank => false
 end
 
+class AllowProcPayloadSanitizer < InputSanitizer::V2::PayloadSanitizer
+  string :status, allow: -> { %w[current past] }
+end
+
 describe InputSanitizer::V2::PayloadSanitizer do
   let(:sanitizer) { TestedPayloadSanitizer.new(@params) }
   let(:cleaned) { sanitizer.cleaned }
@@ -113,6 +117,20 @@ describe InputSanitizer::V2::PayloadSanitizer do
       @params = { :status => 'current bad string' }
       sanitizer.should_not be_valid
       sanitizer.errors[0].field.should eq('/status')
+    end
+
+    context 'when a Proc is passed' do
+      let(:sanitizer) { AllowProcPayloadSanitizer.new(@params) }
+
+      it 'is valid when given an allowed string' do
+        @params = { status: 'current' }
+        sanitizer.should be_valid
+      end
+
+      it 'is invalid when given a disallowed string' do
+        @params = { status: 'invalid status' }
+        sanitizer.should_not be_valid
+      end
     end
   end
 
