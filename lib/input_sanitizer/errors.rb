@@ -35,8 +35,8 @@ module InputSanitizer
       :regexp
     end
 
-    def initialize(regexp)
-      super("does not match the regular expression: #{regexp}")
+    def initialize
+      super("does not match regular expression")
     end
   end
 

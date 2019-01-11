@@ -45,7 +45,7 @@ module InputSanitizer::V2::Types
       elsif value.blank? && (options[:allow_blank] == false || options[:required] == true)
         raise InputSanitizer::BlankValueError
       elsif options[:regexp] && options[:regexp].match(value).nil?
-        raise InputSanitizer::RegexpMismatchError.new(options[:regexp])
+        raise InputSanitizer::RegexpMismatchError.new
       elsif value == nil && options[:allow_nil] == false
         raise InputSanitizer::BlankValueError
       elsif value.blank?
