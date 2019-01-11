@@ -1,3 +1,3 @@
 module InputSanitizer
-  VERSION = "0.3.28"
+  VERSION = "0.3.27"
 end
