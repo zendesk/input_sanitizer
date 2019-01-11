@@ -1,3 +1,6 @@
+0.3.28
+ * Introduced `regexp` option in String sanitizer
+
 0.3.27
  * Accept `allow_nil` option in nested sanitizer
 

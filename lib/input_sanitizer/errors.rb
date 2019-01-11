@@ -30,6 +30,16 @@ module InputSanitizer
     end
   end
 
+  class RegexpMismatchError < ValidationError
+    def code
+      :regexp
+    end
+
+    def initialize(regexp)
+      super("does not match the regular expression: #{regexp}")
+    end
+  end
+
   class ValueNotAllowedError < ValidationError
     def code
       :inclusion

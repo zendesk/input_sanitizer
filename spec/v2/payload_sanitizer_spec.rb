@@ -16,6 +16,7 @@ class TestedPayloadSanitizer < InputSanitizer::V2::PayloadSanitizer
   integer :array_nil, :collection => true, :allow_nil => true
   string :status, :allow => ['current', 'past']
   string :status_with_empty, :allow => ['', 'current', 'past']
+  string :regexp_string, :regexp => /^#?([a-f0-9]{6}|[a-f0-9]{3})$/
   nested :address, :sanitizer => AddressSanitizer
   nested :nullable_address, :sanitizer => AddressSanitizer, :allow_nil => true
   nested :tags, :sanitizer => TagSanitizer, :collection => true
@@ -165,6 +166,18 @@ describe InputSanitizer::V2::PayloadSanitizer do
       @params = { :integer_attribute => nil }
       sanitizer.should be_valid
       sanitizer[:integer_attribute].should be_nil
+    end
+
+    it "is valid when given string is matching regexp" do
+      @params = { :regexp_string => "#8bd635" }
+      sanitizer.should be_valid
+      sanitizer[:regexp_string].should eq('#8bd635')
+    end
+
+    it "is invalid when given string is not matching regexp" do
+      @params = { :regexp_string => "not a hex value" }
+      sanitizer.should_not be_valid
+      sanitizer.errors[0].field.should eq('/regexp_string')
     end
 
     it "is invalid when given integer instead of string" do
