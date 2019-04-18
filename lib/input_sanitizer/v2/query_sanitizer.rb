@@ -2,6 +2,7 @@ class InputSanitizer::V2::QuerySanitizer < InputSanitizer::V2::PayloadSanitizer
   def self.converters
     {
       :integer => InputSanitizer::V2::Types::CoercingIntegerCheck.new,
+      :float => InputSanitizer::V2::Types::CoercingFloatCheck.new,
       :string => InputSanitizer::V2::Types::StringCheck.new,
       :boolean => InputSanitizer::V2::Types::CoercingBooleanCheck.new,
       :datetime => InputSanitizer::V2::Types::DatetimeCheck.new,

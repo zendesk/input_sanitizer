@@ -21,6 +21,7 @@ class TestedPayloadSanitizer < InputSanitizer::V2::PayloadSanitizer
   nested :nullable_address, :sanitizer => AddressSanitizer, :allow_nil => true
   nested :tags, :sanitizer => TagSanitizer, :collection => true
 
+  float :float_attribute, :minimum => 1, :maximum => 100
   integer :integer_attribute, :minimum => 1, :maximum => 100
   string :string_attribute
   boolean :bool_attribute
@@ -133,6 +134,16 @@ describe InputSanitizer::V2::PayloadSanitizer do
       @params = { :limited_collection => ['goldilocks'] }
       sanitizer.should be_valid
     end
+
+    it "is invalid if float is lower than the minimum" do
+      @params = { :float_attribute => 0.0 }
+      sanitizer.should_not be_valid
+    end
+
+    it "is invalid if float is greater than the maximum" do
+      @params = { :float_attribute => 101.0 }
+      sanitizer.should_not be_valid
+    end
   end
 
   describe "strict param checking" do
@@ -162,10 +173,33 @@ describe InputSanitizer::V2::PayloadSanitizer do
       sanitizer[:integer_attribute].should eq(50)
     end
 
+    it "is invalid when given a float" do
+      @params = { :integer_attribute => 50.99 }
+      sanitizer.should_not be_valid
+    end
+
     it "is valid when given nil for an integer" do
       @params = { :integer_attribute => nil }
       sanitizer.should be_valid
       sanitizer[:integer_attribute].should be_nil
+    end
+
+    it "is invalid when given string instead of float" do
+      @params = { :float_attribute => '1' }
+      sanitizer.should_not be_valid
+      sanitizer.errors[0].field.should eq('/float_attribute')
+    end
+
+    it "is valid when given a float" do
+      @params = { :float_attribute => 50.0 }
+      sanitizer.should be_valid
+      sanitizer[:float_attribute].should eq(50.0)
+    end
+
+    it "is valid when given nil for a float" do
+      @params = { :float_attribute => nil }
+      sanitizer.should be_valid
+      sanitizer[:float_attribute].should be_nil
     end
 
     it "is valid when given string is matching regexp" do
@@ -182,6 +216,12 @@ describe InputSanitizer::V2::PayloadSanitizer do
 
     it "is invalid when given integer instead of string" do
       @params = { :string_attribute => 0 }
+      sanitizer.should_not be_valid
+      sanitizer.errors[0].field.should eq('/string_attribute')
+    end
+
+    it "is invalid when given float instead of string" do
+      @params = { :string_attribute => 3.1415 }
       sanitizer.should_not be_valid
       sanitizer.errors[0].field.should eq('/string_attribute')
     end

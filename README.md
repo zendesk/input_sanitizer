@@ -23,6 +23,7 @@ class PersonSanitizer < InputSanitizer::Sanitizer
   string :name
   string :address
   integer :height
+  float :ratio
   date :birthday
 end
 

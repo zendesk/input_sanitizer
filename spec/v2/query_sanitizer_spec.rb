@@ -11,6 +11,7 @@ end
 class TestedQuerySanitizer < InputSanitizer::V2::QuerySanitizer
   string :status, :allow => ['', 'current', 'past']
 
+  float :float_attribute, :minimum => 1, :maximum => 100, :default => 2.7182
   integer :integer_attribute, :minimum => 1, :maximum => 100, :default => 2
   string :string_attribute
   boolean :bool_attribute
@@ -36,10 +37,16 @@ describe InputSanitizer::V2::QuerySanitizer do
   let(:sanitizer) { TestedQuerySanitizer.new(@params) }
 
   describe 'default value' do
-    it 'uses a default value if not provided in params' do
+    it 'integer uses a default value if not provided in params' do
       @params = {}
       sanitizer.should be_valid
       sanitizer[:integer_attribute].should eq(2)
+    end
+
+    it 'float uses a default value if not provided in params' do
+      @params = {}
+      sanitizer.should be_valid
+      sanitizer[:float_attribute].should eq(2.7182)
     end
   end
 
@@ -48,6 +55,18 @@ describe InputSanitizer::V2::QuerySanitizer do
       @params = { :integer_attribute => '22' }
       sanitizer.should be_valid
       sanitizer[:integer_attribute].should eq(22)
+    end
+
+    it 'is valid if given a float as a string' do
+      @params = { :float_attribute => '3.1415' }
+      sanitizer.should be_valid
+      sanitizer[:float_attribute].should eq(3.1415)
+    end
+
+    it 'is valid if given a float as a string without decimals' do
+      @params = { :float_attribute => '3' }
+      sanitizer.should be_valid
+      sanitizer[:float_attribute].should eq(3.0)
     end
 
     it 'is valid if given a "true" boolean as a string' do
@@ -76,6 +95,21 @@ describe InputSanitizer::V2::QuerySanitizer do
 
     it "is valid when integer is within given range" do
       @params = { :integer_attribute => 2 }
+      sanitizer.should be_valid
+    end
+
+    it "is invalid if float is lower than the minimum" do
+      @params = { :float_attribute => 0.0 }
+      sanitizer.should_not be_valid
+    end
+
+    it "is invalid if float is greater than the maximum" do
+      @params = { :float_attribute => 101.0 }
+      sanitizer.should_not be_valid
+    end
+
+    it "is valid when float is within given range" do
+      @params = { :float_attribute => 2.0 }
       sanitizer.should be_valid
     end
   end
@@ -114,6 +148,11 @@ describe InputSanitizer::V2::QuerySanitizer do
   describe "strict type checking" do
     it "is valid when given an integer" do
       @params = { :integer_attribute => 50 }
+      sanitizer.should be_valid
+    end
+
+    it "is valid when given a a float" do
+      @params = { :float_attribute => 3.1415 }
       sanitizer.should be_valid
     end
 
