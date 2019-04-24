@@ -38,6 +38,43 @@ module InputSanitizer::V2::Types
     end
   end
 
+  class FloatCheck
+    def call(value, options = {})
+      if value == nil && (options[:allow_nil] == false || options[:allow_blank] == false || options[:required] == true)
+        raise InputSanitizer::BlankValueError
+      elsif value == nil
+        value
+      else
+        Float(value).tap do |float|
+          raise InputSanitizer::TypeMismatchError.new(value, :float) unless float == value
+          raise InputSanitizer::ValueError.new(value, options[:minimum], options[:maximum]) if options[:minimum] && float < options[:minimum]
+          raise InputSanitizer::ValueError.new(value, options[:minimum], options[:maximum]) if options[:maximum] && float > options[:maximum]
+        end
+      end
+    rescue ArgumentError, TypeError
+      raise InputSanitizer::TypeMismatchError.new(value, :float)
+    end
+  end
+
+  class CoercingFloatCheck
+    def call(value, options = {})
+      if value == nil || value == 'null'
+        if options[:allow_nil] == false || options[:allow_blank] == false || options[:required] == true
+          raise InputSanitizer::BlankValueError
+        else
+          nil
+        end
+      else
+        Float(value).tap do |float|
+          raise InputSanitizer::ValueError.new(value, options[:minimum], options[:maximum]) if options[:minimum] && float < options[:minimum]
+          raise InputSanitizer::ValueError.new(value, options[:minimum], options[:maximum]) if options[:maximum] && float > options[:maximum]
+        end
+      end
+    rescue ArgumentError
+      raise InputSanitizer::TypeMismatchError.new(value, :float)
+    end
+  end
+
   class StringCheck
     def call(value, options = {})
       if options[:allow] && !options[:allow].include?(value)

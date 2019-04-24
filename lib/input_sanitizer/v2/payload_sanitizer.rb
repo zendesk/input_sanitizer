@@ -19,6 +19,7 @@ class InputSanitizer::V2::PayloadSanitizer < InputSanitizer::Sanitizer
   def self.converters
     {
       :integer => InputSanitizer::V2::Types::IntegerCheck.new,
+      :float => InputSanitizer::V2::Types::FloatCheck.new,
       :string => InputSanitizer::V2::Types::StringCheck.new,
       :boolean => InputSanitizer::V2::Types::BooleanCheck.new,
       :datetime => InputSanitizer::V2::Types::DatetimeCheck.new,
