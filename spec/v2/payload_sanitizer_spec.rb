@@ -39,6 +39,15 @@ class BlankValuesPayloadSanitizer < InputSanitizer::V2::PayloadSanitizer
   url :non_blank_url, :allow_blank => false
 end
 
+class CustomConverterWithProvidedValue < InputSanitizer::V2::PayloadSanitizer
+  integer :from
+  custom :to, :provide => :from, :converter => lambda { |value, options|
+    InputSanitizer::V2::Types::IntegerCheck.new.call(value)
+    raise InputSanitizer::ValueError.new(value, options[:provided][:from], nil) if options[:provided][:from] > value
+    value
+  }
+end
+
 describe InputSanitizer::V2::PayloadSanitizer do
   let(:sanitizer) { TestedPayloadSanitizer.new(@params) }
   let(:cleaned) { sanitizer.cleaned }
@@ -157,6 +166,20 @@ describe InputSanitizer::V2::PayloadSanitizer do
       @params = { :address => { :extra => 0 }, :tags => [ { :extra2 => 1 } ] }
       sanitizer.should_not be_valid
       sanitizer.errors.map(&:field).should contain_exactly('/address/extra', '/tags/0/extra2')
+    end
+  end
+
+  describe "converters with provided values" do
+    let(:sanitizer) { CustomConverterWithProvidedValue.new(@params) }
+
+    it "is valid when converter passes check with provided value" do
+      @params = {from: 1, to: 3}
+      sanitizer.should be_valid
+    end
+
+    it "is invalid when converter does not pass check with provided value" do
+      @params = {from: 3, to: 1}
+      sanitizer.should_not be_valid
     end
   end
 
