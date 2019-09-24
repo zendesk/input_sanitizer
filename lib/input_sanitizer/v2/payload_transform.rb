@@ -1,4 +1,5 @@
 require 'active_support/core_ext/hash/indifferent_access'
+require 'active_support/core_ext/object/json'
 
 class InputSanitizer::V2::PayloadTransform
   attr_reader :original_payload, :context
@@ -37,6 +38,9 @@ class InputSanitizer::V2::PayloadTransform
   end
 
   def payload
-    @payload ||= original_payload.with_indifferent_access
+    # `payload` here meant not to have default proc and before rails 4.2 `.with_indifferent_access` removed it.
+    # HashWithIndifferentAccess will copy of orignal hash without default proc only on 1st level keys
+    # If value of 1st level key is a RestrictedHash as well, we need to `.as_json` to clean those defaults as well
+    @payload ||= HashWithIndifferentAccess[original_payload.as_json]
   end
 end
