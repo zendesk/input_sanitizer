@@ -1,8 +1,33 @@
 module InputSanitizer
   class RestrictedHash < Hash
     def initialize(allowed_keys)
-      @allowed_keys = allowed_keys
-      super() { |hash, key| default_for_key(key) }
+      @allowed_keys = Set.new(allowed_keys)
+      super()
+    end
+
+    def [](key)
+      raise_not_allowed(key) unless key_allowed?(key)
+      fetch(key, nil)
+    end
+
+    def []=(key, val)
+      @allowed_keys.add(key)
+      super
+    end
+
+    def store(key, val)
+      @allowed_keys.add(key)
+      super
+    end
+
+    def merge!(hash, &block)
+      @allowed_keys.merge(Set[*hash.keys])
+      super
+    end
+
+    def merge(hash, &block)
+      @allowed_keys.merge(Set[*hash.keys])
+      super
     end
 
     def key_allowed?(key)
@@ -11,6 +36,7 @@ module InputSanitizer
 
     def transform_keys
       return enum_for(:transform_keys) unless block_given?
+
       new_allowed_keys = @allowed_keys.map { |key| yield(key) }
       result = self.class.new(new_allowed_keys)
       each_key do |key|
@@ -21,6 +47,7 @@ module InputSanitizer
 
     def transform_keys!
       return enum_for(:transform_keys!) unless block_given?
+
       @allowed_keys.map! { |key| yield(key) }
       keys.each do |key|
         self[yield(key)] = delete(key)
@@ -29,13 +56,10 @@ module InputSanitizer
     end
 
     private
-    def default_for_key(key)
-      key_allowed?(key) ? nil : raise_not_allowed(key)
-    end
 
     def raise_not_allowed(key)
       msg = "Key not allowed: #{key}"
-      raise KeyNotAllowedError.new(msg)
+      raise KeyNotAllowedError, msg
     end
   end
 end
