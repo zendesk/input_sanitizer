@@ -3,11 +3,12 @@ $LOAD_PATH.push File.expand_path('../lib', __FILE__)
 require 'input_sanitizer/version'
 
 Gem::Specification.new do |gem|
-  gem.authors       = ["Tomek Paczkowski", "Tomasz Werbicki", "Michal Bugno"]
-  gem.email         = ["tom@futuresimple.com", "tomasz@futuresimple.com", "michal@futuresimple.com"]
+  gem.authors       = ["Zendesk"]
+  gem.email         = ["opensource@zendesk.com"]
   gem.description   = %q{Gem to sanitize hash of incoming data}
   gem.summary       = %q{Gem to sanitize hash of incoming data}
   gem.homepage      = ""
+  gem.license       = "Apache License Version 2.0"
 
   gem.files         = `git ls-files`.split($\)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
