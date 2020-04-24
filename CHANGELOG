@@ -1,3 +1,6 @@
+0.3.33
+  * Updated license to Apache License 2.0
+
 0.3.31
   * Redesign RestrictedHash not to use default_proc
 
