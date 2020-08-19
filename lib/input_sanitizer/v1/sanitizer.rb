@@ -139,10 +139,13 @@ class InputSanitizer::V1::Sanitizer
   end
 
   def symbolize_keys(data)
-    data.inject({}) do |memo, kv|
-      memo[kv.first.to_sym] = kv.last
-      memo
+    symbolized_hash = {}
+
+    data.each do |key, value|
+      symbolized_hash[key.to_sym] = value
     end
+
+    symbolized_hash
   end
 
   def self.set_keys_to_converter(keys, converter_or_type)
