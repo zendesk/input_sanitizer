@@ -6,10 +6,10 @@ on:
       - master
 jobs:
   build:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-18.04
     strategy:
       matrix:
-        rvm: [2.0.0,2.1.0,2.2.0,2.5.8,jruby-19mode]
+        rvm: [2.1.9,2.2.10,2.5.8,jruby-head]
     steps:
     - uses: zendesk/checkout@v2
     - name: Set up Ruby
@@ -17,4 +17,6 @@ jobs:
       with:
         ruby-version: ${{ matrix.rvm }}
     - name: Test ${{ matrix.rvm }}
-      run: bundle exec rspec spec
+      run: |
+        bundle install
+        bundle exec rspec spec
