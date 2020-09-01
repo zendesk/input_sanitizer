@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        rvm: [2.1.9,2.2.10,2.5.8,jruby-head]
+    steps:
+    - uses: zendesk/checkout@v2
+    - name: Set up Ruby
+      uses: zendesk/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.rvm }}
+    - name: Test ${{ matrix.rvm }}
+      run: |
+        bundle install
+        bundle exec rspec spec

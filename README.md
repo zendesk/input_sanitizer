@@ -1,4 +1,5 @@
-# InputSanitizer [![Build Status](https://secure.travis-ci.org/futuresimple/input_sanitizer.png?branch=master)](http://travis-ci.org/futuresimple/input_sanitizer)
+# InputSanitizer
+![CI](https://github.com/zendesk/input_sanitizer/workflows/CI/badge.svg)
 
 Gem to sanitize hash of incoming data
 
