@@ -17,6 +17,7 @@ class TestedPayloadSanitizer < InputSanitizer::V2::PayloadSanitizer
   string :status, :allow => ['current', 'past']
   string :status_with_empty, :allow => ['', 'current', 'past']
   string :regexp_string, :regexp => /^#?([a-f0-9]{6}|[a-f0-9]{3})$/
+  string :utf8mb4_string, :strip_4byte_chars => true
   nested :address, :sanitizer => AddressSanitizer
   nested :nullable_address, :sanitizer => AddressSanitizer, :allow_nil => true
   nested :tags, :sanitizer => TagSanitizer, :collection => true
@@ -152,6 +153,18 @@ describe InputSanitizer::V2::PayloadSanitizer do
     it "is invalid if float is greater than the maximum" do
       @params = { :float_attribute => 101.0 }
       sanitizer.should_not be_valid
+    end
+  end
+
+  describe "strip_4byte_chars option" do
+    it "is valid when given a string with 4-byte chars" do
+      @params = { :utf8mb4_string => " some \u{1F435} value " }
+      sanitizer.should be_valid
+    end
+
+    it "returns sanitized string without 4-byte chars" do
+      @params = { :utf8mb4_string => " some \u{1F435} value " }
+      sanitizer[:utf8mb4_string].should eq " some   value "
     end
   end
 
