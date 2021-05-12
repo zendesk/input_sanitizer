@@ -96,8 +96,8 @@ module InputSanitizer::V2::Types
 
         if options[:strip_4byte_chars] && !options[:already_stripped]
           value_without_4byte_chars = strip_4byte_chars(value)
-          updated_options = options.merge(:already_stripped => true) # to prevent infinite loop after second pass
-          call(value_without_4byte_chars, updated_options) # run checks once again to ensure string is still valid after stripping it from 4-byte chars
+          updated_options = options.merge(:already_stripped => true) # to prevent infinite loop
+          call(value_without_4byte_chars, updated_options) # run checks once again to ensure string is still valid after stripping 4-byte chars
         else
           value
         end
