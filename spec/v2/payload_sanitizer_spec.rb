@@ -180,44 +180,43 @@ describe InputSanitizer::V2::PayloadSanitizer do
       sanitizer[:utf8mb4_string].should eq '4-byte char at the end '
     end
 
-
-    it "does not strip 3-byte emojis" do
+    it "does not strip 3-byte chars" do
       @params = { :utf8mb4_string => "Test \u{270A}" }
       sanitizer[:utf8mb4_string].should eq "Test \u{270A}"
     end
 
     describe "when used with other options" do
       describe "allow" do
-        it "is valid when string matched value in allowlist before stripping 4-byte chars" do
+        it "is valid when string matches any value in allowlist before stripping 4-byte chars" do
           @params = { :value_restricted_utf8mb4_string => "test" }
           sanitizer.should be_valid
         end
 
-        it "is invalid when string didin't match value in allowlist before stripping 4-byte chars" do
+        it "is invalid when string doesn't match any value in allowlist before stripping 4-byte chars" do
           @params = { :value_restricted_utf8mb4_string => "test\u{1F435}" }
           sanitizer.should_not be_valid
         end
       end
 
       describe "allow_blank=false" do
-        it "is invalid when string was blank before stripping 4-byte chars" do
+        it "is invalid when string is already blank before stripping 4-byte chars" do
           @params = { :non_blank_utf8mb4_string => " " }
           sanitizer.should_not be_valid
         end
 
-        it "is invalid when string become blank after stripping" do
+        it "is invalid when string becomes blank as a result of stripping 4-byte chars" do
           @params = { :non_blank_utf8mb4_string => " \u{1F435} " }
           sanitizer.should_not be_valid
         end
       end
 
       describe "minimum and maximum" do
-        it "is invalid when string was of wrong size before stripping 4-byte chars" do
+        it "is invalid when string is already too long before stripping 4-byte chars" do
           @params = { :size_restricted_utf8mb4_string => "1234\u{1F435}" }
           sanitizer.should_not be_valid
         end
 
-        it "is invalid when string become too short after stripping 4-byte chars" do
+        it "is invalid when string becomes too short as a result of stripping 4-byte chars" do
           @params = { :size_restricted_utf8mb4_string => "1\u{1F435}" }
           sanitizer.should_not be_valid
         end
