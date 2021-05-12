@@ -93,22 +93,20 @@ module InputSanitizer::V2::Types
           raise InputSanitizer::ValueError.new(value, options[:minimum], options[:maximum]) if options[:minimum] && string.length < options[:minimum]
           raise InputSanitizer::ValueError.new(value, options[:minimum], options[:maximum]) if options[:maximum] && string.length > options[:maximum]
         end
-        options[:strip_4byte_chars] ? strip_4byte_chars(value) : value
+
+        if options[:strip_4byte_chars] && !options[:stripped]
+          without_4byte_chars = strip_4byte_chars(value)
+          call(without_4byte_chars, options.merge(:stripped => true)) # run checks once again to ensure string is still valid after stripping it from 4-byte chars
+        else
+          value
+        end
       end
     end
 
     private
 
-    # Tweaked version of the code from Demoji lib. Original implementation can be found here:
-    # https://github.com/taskrabbit/demoji/blob/c1e7a771da2267cbcf46f96ee113ce6824ae12f8/lib/demoji.rb#L39:L50
     def strip_4byte_chars(string)
-      output = ''
-      string.length.times do |i|
-        char = string[i]
-        char = 32.chr if char.ord > 65535
-        output << char
-      end
-      output
+      string.chars.select { |ch| ch.ord <= 65535 }.join
     end
   end
 
