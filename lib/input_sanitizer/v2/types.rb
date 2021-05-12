@@ -106,7 +106,7 @@ module InputSanitizer::V2::Types
     private
 
     def strip_4byte_chars(string)
-      string.chars.select { |ch| ch.ord <= 65535 }.join
+      string.chars.reject { |char| char.bytesize >= 4 }.join
     end
   end
 
