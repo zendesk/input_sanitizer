@@ -18,8 +18,8 @@ class TestedPayloadSanitizer < InputSanitizer::V2::PayloadSanitizer
   string :status_with_empty, :allow => ['', 'current', 'past']
   string :regexp_string, :regexp => /^#?([a-f0-9]{6}|[a-f0-9]{3})$/
   string :utf8mb4_string, :strip_4byte_chars => true
-  string :non_blank_utf8mb4_string, :strip_4byte_chars => true, :allow_blank => false
   string :value_restricted_utf8mb4_string, :strip_4byte_chars => true, :allow => ['test']
+  string :non_blank_utf8mb4_string, :strip_4byte_chars => true, :allow_blank => false
   string :size_restricted_utf8mb4_string, :strip_4byte_chars => true, :minimum => 2, :maximum => 4
   nested :address, :sanitizer => AddressSanitizer
   nested :nullable_address, :sanitizer => AddressSanitizer, :allow_nil => true
@@ -161,13 +161,13 @@ describe InputSanitizer::V2::PayloadSanitizer do
 
   describe "strip_4byte_chars option" do
     it "is valid when given a string with 4-byte chars" do
-      @params = { :utf8mb4_string => " some \u{1F435} value " }
+      @params = { :utf8mb4_string => " test \u{1F435} value " }
       sanitizer.should be_valid
     end
 
     it "returns sanitized string without 4-byte chars" do
-      @params = { :utf8mb4_string => " some \u{1F435} value " }
-      sanitizer[:utf8mb4_string].should eq " some  value "
+      @params = { :utf8mb4_string => " test \u{1F435} value " }
+      sanitizer[:utf8mb4_string].should eq " test  value "
     end
 
     it "properly handles string with 4-byte char at the beginning" do
