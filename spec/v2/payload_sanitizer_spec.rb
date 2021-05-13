@@ -175,6 +175,11 @@ describe InputSanitizer::V2::PayloadSanitizer do
       sanitizer[:utf8mb4_string].should eq ' 4-byte char at the beginning'
     end
 
+    it "properly handles string with 4-byte char in the middle" do
+      @params = { :utf8mb4_string => "4-byte char\u{1F435} in the middle" }
+      sanitizer[:utf8mb4_string].should eq '4-byte char in the middle'
+    end
+
     it "properly handles string with 4-byte char at the end" do
       @params = { :utf8mb4_string => "4-byte char at the end \u{1F435}" }
       sanitizer[:utf8mb4_string].should eq '4-byte char at the end '
