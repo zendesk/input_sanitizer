@@ -161,13 +161,13 @@ describe InputSanitizer::V2::PayloadSanitizer do
 
   describe "strip_4byte_chars option" do
     it "is valid when given a string with 4-byte chars" do
-      @params = { :utf8mb4_string => " test \u{1F435} value " }
+      @params = { :utf8mb4_string => "test \u{1F435} value" }
       sanitizer.should be_valid
     end
 
     it "returns sanitized string without 4-byte chars" do
-      @params = { :utf8mb4_string => " test \u{1F435} value " }
-      sanitizer[:utf8mb4_string].should eq " test  value "
+      @params = { :utf8mb4_string => "test\u{1F435}" }
+      sanitizer[:utf8mb4_string].should eq "test"
     end
 
     it "properly handles string with 4-byte char at the beginning" do
