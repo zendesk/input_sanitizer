@@ -107,7 +107,7 @@ module InputSanitizer::V2::Types
     private
 
     def strip_4byte_chars(string)
-      string.chars.reject { |char| char.bytesize >= 4 }.join
+      string.each_char.with_object(String.new) { |char, output| output << char if char.bytesize < 4 }
     end
   end
 
