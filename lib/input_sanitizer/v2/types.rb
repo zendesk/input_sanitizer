@@ -93,7 +93,21 @@ module InputSanitizer::V2::Types
           raise InputSanitizer::ValueError.new(value, options[:minimum], options[:maximum]) if options[:minimum] && string.length < options[:minimum]
           raise InputSanitizer::ValueError.new(value, options[:minimum], options[:maximum]) if options[:maximum] && string.length > options[:maximum]
         end
+
+        if options[:strip_4byte_chars] && !options[:already_stripped]
+          value_without_4byte_chars = strip_4byte_chars(value)
+          updated_options = options.merge(:already_stripped => true) # to prevent infinite loop
+          call(value_without_4byte_chars, updated_options) # run checks once again to ensure string is still valid after stripping 4-byte chars
+        else
+          value
+        end
       end
+    end
+
+    private
+
+    def strip_4byte_chars(string)
+      string.each_char.with_object(String.new) { |char, output| output << char if char.bytesize < 4 }
     end
   end
 
