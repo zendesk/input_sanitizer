@@ -1,3 +1,6 @@
+0.4.1
+  * Added `strip_4byte_chars` option to String V2 sanitizer
+
 0.4.0
   * Stopped supporting Ruby 1.8 and 1.9
   * Added support for Rails 5.1 and ruby 2.5.8
