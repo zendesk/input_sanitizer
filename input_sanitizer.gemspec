@@ -23,5 +23,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "pry", "~> 0.10.1"
   gem.add_development_dependency "simplecov", "~> 0.9.2"
 
-  gem.add_development_dependency "rspec", "~> 3.11"
+  gem.add_development_dependency "rspec", "~> 3.2.0"
 end
