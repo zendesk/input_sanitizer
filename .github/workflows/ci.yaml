@@ -1,26 +1,26 @@
 name: CI
 
-on:
-  push:
-    branches: 
-      - master
-  pull_request:
-    branches:
-      - master
+on: push
 
 jobs:
   build:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        rvm: [2.1.9,2.2.10,2.5.8,jruby-head]
+        ruby-version:
+          - 2.3.8
+          - 2.5.8
+          - 2.6.8
+          - 2.7.6
+          - 3.0.4
+          - 3.1.2
     steps:
     - uses: zendesk/checkout@v2
     - name: Set up Ruby
       uses: zendesk/setup-ruby@v1
       with:
-        ruby-version: ${{ matrix.rvm }}
-    - name: Test ${{ matrix.rvm }}
+        ruby-version: ${{ matrix.ruby-version }}
+    - name: Test ${{ matrix.ruby-version }}
       run: |
         bundle install
         bundle exec rspec spec

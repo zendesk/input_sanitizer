@@ -1,4 +1,5 @@
 require 'active_support/core_ext/object/blank'
+require 'uri'
 
 module InputSanitizer::V2::Types
   class IntegerCheck

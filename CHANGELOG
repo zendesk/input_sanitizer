@@ -1,3 +1,6 @@
+0.5.0
+  * Added support for Ruby 3
+
 0.4.1
   * Added `strip_4byte_chars` option to String V2 sanitizer
 
