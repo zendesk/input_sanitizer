@@ -19,4 +19,3 @@ RSpec.configure do |config|
 end
 
 require 'input_sanitizer'
-require 'pry'
