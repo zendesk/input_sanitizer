@@ -484,6 +484,11 @@ describe InputSanitizer::V2::PayloadSanitizer do
       end
 
       describe "array of nested objects" do
+        it "is valid when given a collection of nested objects" do
+          @params = { :tags => [{:id => 1, :name => "crm", :addresses => []}]}
+          sanitizer.should be_valid
+        end
+
         it "returns an error when given a nil for a collection" do
           @params = { :tags => nil }
           sanitizer.should_not be_valid
@@ -491,6 +496,11 @@ describe InputSanitizer::V2::PayloadSanitizer do
 
         it "returns an error when given a string for a collection" do
           @params = { :tags => 'nope' }
+          sanitizer.should_not be_valid
+        end
+
+        it "returns an error when given an collection of raw values" do
+          @params = { :tags => ['nope'] }
           sanitizer.should_not be_valid
         end
 
