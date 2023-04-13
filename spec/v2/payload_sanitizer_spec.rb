@@ -502,6 +502,8 @@ describe InputSanitizer::V2::PayloadSanitizer do
         it "returns an error when given an collection of raw values" do
           @params = { :tags => ['nope'] }
           sanitizer.should_not be_valid
+          sanitizer.errors.length.should eq(1)
+          sanitizer.errors.map(&:field).should contain_exactly('/tags/0')
         end
 
         it "returns an error when given a hash for a collection" do
